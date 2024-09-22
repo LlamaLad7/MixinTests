@@ -80,12 +80,12 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
 
     @Override
     public IContainerHandle getPrimaryContainer() {
-        try {
-            URI uri = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
-            return new ContainerHandleURI(uri);
-        } catch (URISyntaxException ex) {
-            LOGGER.log(System.Logger.Level.WARNING, ex);
-        }
+//        try {
+//            URI uri = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
+//            return new ContainerHandleURI(uri);
+//        } catch (URISyntaxException ex) {
+//            LOGGER.log(System.Logger.Level.WARNING, ex);
+//        }
         return new ContainerHandleVirtual(this.getName());
     }
 

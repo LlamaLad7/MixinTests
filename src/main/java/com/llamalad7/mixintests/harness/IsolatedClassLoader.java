@@ -77,7 +77,7 @@ public class IsolatedClassLoader extends URLClassLoader {
                 }
             }
         }
-        return defineClass(name, bytes, 0, bytes.length, getCodeSource(name));
+        return defineClass(name, bytes, 0, bytes.length);
     }
 
     private CodeSource getCodeSource(String className) {
@@ -92,7 +92,7 @@ public class IsolatedClassLoader extends URLClassLoader {
 
     protected byte[] getClassBytes(String className) {
         return classCache.computeIfAbsent(className, name -> {
-            URL url = getResource(FileUtil.getClassFileName(name));
+            URL url = getResource(FileUtil.getClassFileName(className));
             if (url == null) {
                 return null;
             }

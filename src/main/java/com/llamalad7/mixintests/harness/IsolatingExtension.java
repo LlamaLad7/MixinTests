@@ -41,11 +41,7 @@ public class IsolatingExtension implements InvocationInterceptor, TestInstancePr
     private void invokeSandboxedMethod(Object testInstance, String methodName, Class<?>[] parameterTypes, Object[] args) throws Exception {
         Sandbox sandbox = sandboxes.computeIfAbsent(testInstance, k -> {
             String testClassName = k.getClass().getName();
-            try {
-                return new Sandbox(testClassName);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to create sandbox: ", e);
-            }
+            return new Sandbox(testClassName);
         });
         Object sandboxedInstance = sandbox.newInstance(testInstance.getClass().getName());
         Class<?> testClass = sandboxedInstance.getClass();

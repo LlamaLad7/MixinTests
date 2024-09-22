@@ -21,6 +21,7 @@ dependencies {
     implementation("org.ow2.asm:asm-util:9.7")
     implementation("commons-io:commons-io:2.17.0")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.jimfs:jimfs:1.3.0")
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0")
     implementation("org.apache.logging.log4j:log4j-core:2.24.0")

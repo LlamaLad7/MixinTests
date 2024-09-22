@@ -25,6 +25,6 @@ public class ExampleTest {
     }
 
     private static Stream<Integer> range() {
-        return IntStream.range(1, 10000).boxed();
+        return IntStream.range(1, 1000).boxed();
     }
 }

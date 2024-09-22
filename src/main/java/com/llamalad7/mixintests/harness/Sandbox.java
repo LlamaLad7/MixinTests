@@ -6,21 +6,22 @@ import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
 
 public class Sandbox {
-    private final URLClassLoader transformingClassLoader;
+    private final String testClassName;
+    private URLClassLoader transformingClassLoader;
 
-    public Sandbox(String testClassName) throws Exception {
-        transformingClassLoader = makeTransformingClassLoader(testClassName);
+    public Sandbox(String testClassName) {
+        this.testClassName = testClassName;
     }
 
     public Object newInstance(String testClassName) throws Exception {
         return ReflectionUtils.newInstance(
-                transformingClassLoader.loadClass(testClassName)
+                getTransformingClassLoader().loadClass(testClassName)
         );
     }
 
     public void withContextClassLoader(Runnable routine) {
         ClassLoader currentThreadPreviousClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(transformingClassLoader);
+        Thread.currentThread().setContextClassLoader(getTransformingClassLoader());
         try {
             routine.run();
         } finally {
@@ -29,13 +30,26 @@ public class Sandbox {
     }
 
     public void close() throws Exception {
-        transformingClassLoader.close();
+        if (transformingClassLoader != null) {
+            transformingClassLoader.close();
+        }
     }
 
-    private static URLClassLoader makeTransformingClassLoader(String testClassName) throws Exception {
-        URLClassLoader bootstrapCl = new IsolatedClassLoader("bootstrap", ClassLoader.getSystemClassLoader());
-        Class<?> transformingClClass = bootstrapCl.loadClass("com.llamalad7.mixintests.service.TransformingClassLoader");
-        Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, String.class);
-        return (URLClassLoader) ctor.newInstance(bootstrapCl, testClassName);
+    private synchronized URLClassLoader getTransformingClassLoader() {
+        if (transformingClassLoader == null) {
+            transformingClassLoader = makeTransformingClassLoader(testClassName);
+        }
+        return transformingClassLoader;
+    }
+
+    private static URLClassLoader makeTransformingClassLoader(String testClassName) {
+        try {
+            URLClassLoader bootstrapCl = new IsolatedClassLoader("bootstrap", ClassLoader.getSystemClassLoader());
+            Class<?> transformingClClass = bootstrapCl.loadClass("com.llamalad7.mixintests.service.TransformingClassLoader");
+            Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, String.class);
+            return (URLClassLoader) ctor.newInstance(bootstrapCl, testClassName);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to make sandbox CL: ", e);
+        }
     }
 }
