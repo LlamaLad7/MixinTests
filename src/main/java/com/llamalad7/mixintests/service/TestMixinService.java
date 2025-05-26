@@ -17,11 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
 @AutoService(IMixinService.class)
-public class TestMixinService extends MixinServiceAbstract implements IClassBytecodeProvider {
+public class TestMixinService extends MixinServiceAbstract implements IClassBytecodeProvider, IClassProvider {
     private static final System.Logger LOGGER = System.getLogger("TestMixinService");
 
     static IMixinTransformer transformer;
@@ -50,7 +51,7 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
 
     @Override
     public IClassProvider getClassProvider() {
-        return null;
+        return this;
     }
 
     @Override
@@ -114,5 +115,26 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
             new ClassReader(is).accept(node, readerFlags);
             return node;
         }
+    }
+
+    @Override
+    public URL[] getClassPath() {
+        // Unused on 0.8.x
+        return new URL[0];
+    }
+
+    @Override
+    public Class<?> findClass(String name) throws ClassNotFoundException {
+        return findClass(name, true);
+    }
+
+    @Override
+    public Class<?> findClass(String name, boolean initialize) throws ClassNotFoundException {
+        return Class.forName(name, initialize, TransformingClassLoader.getInstance());
+    }
+
+    @Override
+    public Class<?> findAgentClass(String name, boolean initialize) throws ClassNotFoundException {
+        return Class.forName(name, initialize, getClass().getClassLoader());
     }
 }

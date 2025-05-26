@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    `mixintests-patched-mixin`
 }
 
 group = "com.llamalad7"
@@ -15,7 +16,7 @@ dependencies {
     implementation(project("targets"))
     testImplementation(testAnnotationProcessor(project("annotationprocessor"))!!)
     implementation(annotationProcessor("com.google.auto.service:auto-service:1.1.1")!!)
-    implementation("org.spongepowered:mixin:0.8.7")
+    compileOnly(testCompileOnly("org.spongepowered:mixin:0.8.7")!!)
     implementation("org.ow2.asm:asm-tree:9.7")
     implementation("org.ow2.asm:asm-commons:9.7")
     implementation("org.ow2.asm:asm-util:9.7")
@@ -32,12 +33,37 @@ dependencies {
     implementation("org.junit.platform:junit-platform-launcher:1.11.0")
 }
 
+val mixinVersions = listOf(
+    "0.8.5",
+    "0.8.7",
+)
+
+val jarFiles = mixinVersions.flatMap { version ->
+    val config = configurations.detachedConfiguration(
+        dependencies.create("org.spongepowered:mixin:$version")
+    )
+    config.applyMixinPatches()
+    config.resolve()
+}
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-tasks.test {
+sourceSets {
+    test {
+        java {
+            // Needed for IntelliJ to run the tests with Gradle, for some reason.
+            srcDirs(layout.buildDirectory.dir("generated/sources/annotationProcessor/java/test"))
+        }
+    }
+}
+
+tasks.withType<Test> {
     useJUnitPlatform()
+    systemProperty("mixin.debug.verbose", "true")
+    systemProperty("mixin.debug.export", "true")
+    systemProperty("mixintests.mixinvariants", jarFiles.joinToString(";") { it.absolutePath })
 }

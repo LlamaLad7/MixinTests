@@ -10,7 +10,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@AutoService(Extension.class)
+//@AutoService(Extension.class)
 public class IsolatingExtension implements InvocationInterceptor, TestInstancePreDestroyCallback {
     private final Map<Object, Sandbox> sandboxes = Collections.synchronizedMap(new IdentityHashMap<>());
 

@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.Mixins;
 import java.lang.reflect.Method;
 
 public class MixinSetup {
-    public static void init(String testClass) {
+    public static void init(String configName) {
         MixinBootstrap.init();
-        Mixins.addConfiguration(testClass + ".mixins.json", null);
+        Mixins.addConfiguration(configName, null);
         finishMixinBootstrapping();
     }
 
