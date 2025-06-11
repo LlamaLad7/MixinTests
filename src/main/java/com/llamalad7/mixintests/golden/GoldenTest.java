@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class GoldenTest {
@@ -25,6 +27,7 @@ public class GoldenTest {
     private final MixinVersions mixinVersions;
     private final Path baseOutputDir;
     private final Path classOutputDir;
+    private final List<Error> errors = new ArrayList<>();
 
     public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions) {
         this.testName = testName;
@@ -37,6 +40,9 @@ public class GoldenTest {
     public void test() {
         try {
             doTest();
+            for (Error error : errors) {
+                throw error;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -70,7 +76,8 @@ public class GoldenTest {
             if (!CI) {
                 Files.writeString(file, actual);
             }
-            throw new AssertionFailedError("Expected file %s did not exist!".formatted(file));
+            errors.add(new AssertionFailedError("Expected file %s did not exist!".formatted(file)));
+            return;
         }
         String expected = GoldenUtils.normalize(Files.readString(file));
         if (!actual.equals(expected)) {
@@ -78,10 +85,12 @@ public class GoldenTest {
                 Files.writeString(file, actual);
                 return;
             }
-            throw new AssertionFailedError(
-                    "Content is not equal",
-                    new FileInfo(file.toAbsolutePath().toString(), expected.getBytes(StandardCharsets.UTF_8)),
-                    actual
+            errors.add(
+                    new AssertionFailedError(
+                            "Content is not equal",
+                            new FileInfo(file.toAbsolutePath().toString(), expected.getBytes(StandardCharsets.UTF_8)),
+                            actual
+                    )
             );
         }
     }
