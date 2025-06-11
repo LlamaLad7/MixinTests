@@ -46,7 +46,7 @@ public class TransformingClassLoader extends IsolatedClassLoader implements Tran
             return null;
         }
         byte[] transformedBytes = TestMixinService.transformer.transformClassBytes(name, name, classBytes);
-        if (MixinClassDetector.hasMixins(transformedBytes)) {
+        if (transformedBytes != classBytes) {
             postMixinClasses.putIfAbsent(name, transformedBytes);
         }
         return transformedBytes;
