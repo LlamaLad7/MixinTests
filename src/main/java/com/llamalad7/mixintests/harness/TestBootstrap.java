@@ -5,6 +5,7 @@ import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -21,14 +22,19 @@ public class TestBootstrap {
     }
 
     private static void doTest(String configName, MixinVersions mixinVersions) {
-        Sandbox sandbox = new Sandbox(configName, mixinVersions);
-        sandbox.withContextClassLoader(() -> {
-            try {
-                sandbox.loadClass(TEST_UTILS).getMethod(DO_TEST).invoke(null);
-            } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        TestResult result;
+        try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
+            result = sandbox.doTest(() -> {
+                try {
+                    return (String) sandbox.loadClass(TEST_UTILS).getMethod(DO_TEST).invoke(null);
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(result);
     }
 
     private static Stream<MixinVersions> getMixinVersions() {

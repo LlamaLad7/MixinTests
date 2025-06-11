@@ -5,8 +5,9 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 
 @SuppressWarnings("unused")
 public class TestUtils {
-    public static void doTest() {
+    public static String doTest() {
         MixinEnvironment.getCurrentEnvironment().audit();
+        return "hello";
     }
 
     public static SandboxInfo getSandboxInfo() {

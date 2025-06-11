@@ -1,12 +1,14 @@
 package com.llamalad7.mixintests.harness;
 
 import com.llamalad7.mixintests.harness.util.MixinVersions;
-import org.junit.platform.commons.util.ReflectionUtils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
+import java.util.function.Supplier;
 
-public class Sandbox {
+public class Sandbox implements Closeable {
     private final URLClassLoader transformingClassLoader;
 
     public Sandbox(String configName, MixinVersions mixinVersions) {
@@ -17,23 +19,17 @@ public class Sandbox {
         return transformingClassLoader.loadClass(className);
     }
 
-    public Object newInstance(String testClassName) throws Exception {
-        return ReflectionUtils.newInstance(
-                transformingClassLoader.loadClass(testClassName)
-        );
-    }
-
-    public void withContextClassLoader(Runnable routine) {
+    public TestResult doTest(Supplier<String> routine) {
         ClassLoader currentThreadPreviousClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(transformingClassLoader);
         try {
-            routine.run();
+            return new TestResult(routine.get(), ((TransformingClassLoaderBridge) transformingClassLoader).getTransformedClasses());
         } finally {
             Thread.currentThread().setContextClassLoader(currentThreadPreviousClassLoader);
         }
     }
 
-    public void close() throws Exception {
+    public void close() throws IOException {
         if (transformingClassLoader != null) {
             transformingClassLoader.close();
         }
