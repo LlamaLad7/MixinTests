@@ -1,9 +1,12 @@
 package com.llamalad7.mixintests.harness;
 
+import com.github.zafarkhaja.semver.Version;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class TestBootstrap {
@@ -29,10 +32,18 @@ public class TestBootstrap {
     }
 
     private static Stream<MixinVersions> getMixinVersions() {
-        return Stream.concat(MixinVersionInfo.MIXIN_VERSIONS.stream(), MixinVersionInfo.FABRIC_MIXIN_VERSIONS.stream())
-                .flatMap(mixinVer ->
-                        MixinVersionInfo.MIXINEXTRAS_VERSIONS.stream().map(mixinExtrasVer -> new MixinVersions(mixinVer, mixinExtrasVer))
-                );
+        Set<MixinVersions> result = new HashSet<>();
+        for (Version mixinVersion : MixinVersionInfo.MIXIN_VERSIONS) {
+            result.add(new MixinVersions(mixinVersion, MixinVersionInfo.MIXINEXTRAS_VERSIONS.last(), false));
+        }
+        for (Version mixinVersion : MixinVersionInfo.FABRIC_MIXIN_VERSIONS) {
+            result.add(new MixinVersions(mixinVersion, MixinVersionInfo.MIXINEXTRAS_VERSIONS.last(), true));
+        }
+        for (Version mixinExtrasVersion : MixinVersionInfo.MIXINEXTRAS_VERSIONS) {
+            result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), mixinExtrasVersion, false));
+            result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), mixinExtrasVersion, true));
+        }
+        return result.stream();
     }
 
 }

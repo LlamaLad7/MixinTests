@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-public record MixinVersions(Version mixinVersion, Version mixinExtrasVersion) {
+public record MixinVersions(Version mixinVersion, Version mixinExtrasVersion, boolean isFabric) {
     @Override
     public String toString() {
         return "Mixin %s, MixinExtras %s".formatted(mixinVersion, mixinExtrasVersion);
