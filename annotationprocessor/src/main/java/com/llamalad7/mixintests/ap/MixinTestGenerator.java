@@ -1,9 +1,6 @@
 package com.llamalad7.mixintests.ap;
 
-import com.palantir.javapoet.ClassName;
-import com.palantir.javapoet.JavaFile;
-import com.palantir.javapoet.MethodSpec;
-import com.palantir.javapoet.TypeSpec;
+import com.palantir.javapoet.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.processing.Filer;
@@ -11,11 +8,13 @@ import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 public record MixinTestGenerator(List<MixinTestConfig> configs) {
     private static final String TESTS_PACKAGE = "com.llamalad7.mixintests.tests";
     private static final String MIXINS_PACKAGE = TESTS_PACKAGE + ".mixins";
-    private static final ClassName TEST_ANNOTATION = ClassName.get("org.junit.jupiter.api", "Test");
+    private static final ClassName TEST_ANNOTATION = ClassName.get("org.junit.jupiter.api", "TestFactory");
+    private static final ClassName DYNAMIC_TEST = ClassName.get("org.junit.jupiter.api", "DynamicTest");
     private static final ClassName TEST_BOOTSTRAP = ClassName.get("com.llamalad7.mixintests.harness", "TestBootstrap");
 
     public void generate(Filer filer) {
@@ -44,9 +43,10 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
 
     private MethodSpec generateTest(MixinTestConfig config) {
         return MethodSpec.methodBuilder(testMethodName(config.getGroupName()))
+                .returns(ParameterizedTypeName.get(ClassName.get(Stream.class), DYNAMIC_TEST))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(TEST_ANNOTATION)
-                .addCode("$T.doTest($S);", TEST_BOOTSTRAP, config.getFileName())
+                .addCode("return $T.doTest($S);", TEST_BOOTSTRAP, config.getFileName())
                 .build();
     }
 

@@ -45,7 +45,7 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
     }
 
     @Override
-    public synchronized ILogger getLogger(String name) {
+    protected ILogger createLogger(String name) {
         return new LoggerAdapterLog4j2(name);
     }
 

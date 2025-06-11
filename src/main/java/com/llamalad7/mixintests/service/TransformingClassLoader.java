@@ -1,6 +1,7 @@
 package com.llamalad7.mixintests.service;
 
 import com.llamalad7.mixintests.harness.IsolatedClassLoader;
+import com.llamalad7.mixintests.harness.SandboxInfo;
 import com.llamalad7.mixintests.tests.targets.DummyMixinTarget;
 
 import java.io.IOException;
@@ -16,14 +17,14 @@ public class TransformingClassLoader extends IsolatedClassLoader {
 
     private final SandboxInfo sandboxInfo;
 
-    public TransformingClassLoader(ClassLoader parent, String configName) {
-        super("transforming", parent);
+    public TransformingClassLoader(ClassLoader parent, SandboxInfo sandboxInfo) {
+        super("transforming", parent, null);
         if (INSTANCE != null) {
             throw new IllegalStateException("TransformingClassLoader already initialized");
         }
         INSTANCE = this;
-        this.sandboxInfo = new SandboxInfo(configName);
-        MixinSetup.init(configName);
+        this.sandboxInfo = sandboxInfo;
+        MixinSetup.init(sandboxInfo.mixinConfig());
         loadDummyTarget();
     }
 

@@ -1,7 +1,9 @@
 package com.llamalad7.mixintests.harness;
 
+import com.github.zafarkhaja.semver.Version;
 import com.google.common.collect.Iterators;
 import com.llamalad7.mixintests.harness.util.FileUtil;
+import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -16,6 +18,7 @@ import java.security.cert.Certificate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 public class IsolatedClassLoader extends URLClassLoader {
     static {
@@ -23,19 +26,49 @@ public class IsolatedClassLoader extends URLClassLoader {
     }
 
     private static final URL[] CLASSPATH = getSystemClassPath();
+    private static final String MIXIN_PACKAGE = "org.spongepowered.";
+    private static final String MIXINEXTRAS_PACKAGE = "com.llamalad7.mixinextras.";
     private static final List<String> ISOLATED_PACKAGES = Arrays.asList(
-            "org.spongepowered.",
+            MIXIN_PACKAGE,
+            MIXINEXTRAS_PACKAGE,
             "com.llamalad7.mixintests.service.",
             "com.llamalad7.mixintests.tests."
     );
-    private static final Map<String, byte[]> classCache = new ConcurrentHashMap<>();
+    private static final Map<String, byte[]> generalClassCache = new ConcurrentHashMap<>();
+    private static final Map<Version, Map<String, byte[]>> mixinClassCaches = new ConcurrentHashMap<>();
+    private static final Map<Version, Map<String, byte[]>> mixinExtrasClassCaches = new ConcurrentHashMap<>();
 
     protected final ClassLoader delegate;
+    private final Map<String, byte[]> mixinClassCache;
+    private final Map<String, byte[]> mixinExtrasClassCache;
     private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<>();
 
-    public IsolatedClassLoader(String name, ClassLoader parent) {
-        super(name, CLASSPATH, new DummyClassLoader());
+    public IsolatedClassLoader(String name, ClassLoader parent, MixinVersions mixinVersions) {
+        super(name, getClasspath(mixinVersions), new DummyClassLoader());
         delegate = parent;
+        if (mixinVersions == null) {
+            mixinClassCache = null;
+            mixinExtrasClassCache = null;
+        } else {
+            mixinClassCache = mixinClassCaches.computeIfAbsent(mixinVersions.mixinVersion(), k -> new ConcurrentHashMap<>());
+            mixinExtrasClassCache = mixinExtrasClassCaches.computeIfAbsent(mixinVersions.mixinExtrasVersion(), k -> new ConcurrentHashMap<>());
+        }
+    }
+
+    private static URL[] getClasspath(MixinVersions mixinVersions) {
+        if (mixinVersions == null) {
+            return CLASSPATH;
+        }
+        return Stream.concat(
+                Arrays.stream(CLASSPATH),
+                mixinVersions.getJars().stream().map(jar -> {
+                    try {
+                        return jar.toURI().toURL();
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+        ).toArray(URL[]::new);
     }
 
     @Override
@@ -91,7 +124,11 @@ public class IsolatedClassLoader extends URLClassLoader {
     }
 
     protected byte[] getClassBytes(String className) {
-        return classCache.computeIfAbsent(className, name -> {
+        Map<String, byte[]> cache =
+                className.startsWith(MIXIN_PACKAGE) ? mixinClassCache
+                        : className.startsWith(MIXINEXTRAS_PACKAGE) ? mixinExtrasClassCache
+                        : generalClassCache;
+        return cache.computeIfAbsent(className, name -> {
             URL url = getResource(FileUtil.getClassFileName(className));
             if (url == null) {
                 return null;

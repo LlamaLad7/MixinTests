@@ -18,6 +18,7 @@ dependencies {
     testImplementation(testAnnotationProcessor(project("annotationprocessor"))!!)
     implementation(annotationProcessor("com.google.auto.service:auto-service:1.1.1")!!)
     compileOnly(testCompileOnly("org.spongepowered:mixin:0.8.7")!!)
+    compileOnly(testCompileOnly("io.github.llamalad7:mixinextras-common:0.4.1")!!)
     implementation("org.ow2.asm:asm-tree:9.7")
     implementation("org.ow2.asm:asm-commons:9.7")
     implementation("org.ow2.asm:asm-util:9.7")
@@ -32,6 +33,7 @@ dependencies {
     implementation(platform("org.junit:junit-bom:5.11.0"))
     implementation("org.junit.jupiter:junit-jupiter")
     implementation("org.junit.platform:junit-platform-launcher:1.11.0")
+    implementation("com.github.zafarkhaja:java-semver:0.10.2")
 }
 
 buildConfig {

@@ -1,31 +1,31 @@
 package com.llamalad7.mixintests.harness;
 
+import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.Constructor;
 import java.net.URLClassLoader;
 
 public class Sandbox {
-    private final String configName;
-    private URLClassLoader transformingClassLoader;
+    private final URLClassLoader transformingClassLoader;
 
-    public Sandbox(String configName) {
-        this.configName = configName;
+    public Sandbox(String configName, MixinVersions mixinVersions) {
+        this.transformingClassLoader = makeTransformingClassLoader(configName, mixinVersions);
     }
 
     public Class<?> loadClass(String className) throws ClassNotFoundException {
-        return getTransformingClassLoader().loadClass(className);
+        return transformingClassLoader.loadClass(className);
     }
 
     public Object newInstance(String testClassName) throws Exception {
         return ReflectionUtils.newInstance(
-                getTransformingClassLoader().loadClass(testClassName)
+                transformingClassLoader.loadClass(testClassName)
         );
     }
 
     public void withContextClassLoader(Runnable routine) {
         ClassLoader currentThreadPreviousClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getTransformingClassLoader());
+        Thread.currentThread().setContextClassLoader(transformingClassLoader);
         try {
             routine.run();
         } finally {
@@ -39,19 +39,12 @@ public class Sandbox {
         }
     }
 
-    private synchronized URLClassLoader getTransformingClassLoader() {
-        if (transformingClassLoader == null) {
-            transformingClassLoader = makeTransformingClassLoader(configName);
-        }
-        return transformingClassLoader;
-    }
-
-    private static URLClassLoader makeTransformingClassLoader(String configName) {
+    private static URLClassLoader makeTransformingClassLoader(String configName, MixinVersions mixinVersions) {
         try {
-            URLClassLoader bootstrapCl = new IsolatedClassLoader("bootstrap", ClassLoader.getSystemClassLoader());
+            URLClassLoader bootstrapCl = new IsolatedClassLoader("bootstrap", ClassLoader.getSystemClassLoader(), mixinVersions);
             Class<?> transformingClClass = bootstrapCl.loadClass("com.llamalad7.mixintests.service.TransformingClassLoader");
-            Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, String.class);
-            return (URLClassLoader) ctor.newInstance(bootstrapCl, configName);
+            Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, SandboxInfo.class);
+            return (URLClassLoader) ctor.newInstance(bootstrapCl, new SandboxInfo(configName, mixinVersions));
         } catch (Exception e) {
             throw new RuntimeException("Failed to make sandbox CL: ", e);
         }
