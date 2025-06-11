@@ -1,0 +1,13 @@
+val MIXIN_VERSIONS = listOf(
+    "0.8.5",
+    "0.8.7",
+)
+
+val FABRIC_MIXIN_VERSIONS = listOf(
+    "0.15.5+mixin.0.8.7",
+)
+
+val MIXINEXTRAS_VERSIONS = listOf(
+    "0.4.1",
+    "0.5.0-rc.2",
+)

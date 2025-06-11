@@ -1,6 +1,7 @@
 plugins {
     id("java")
     `mixintests-patched-mixin`
+    id("com.github.gmazzo.buildconfig") version "5.6.5"
 }
 
 group = "com.llamalad7"
@@ -33,17 +34,14 @@ dependencies {
     implementation("org.junit.platform:junit-platform-launcher:1.11.0")
 }
 
-val mixinVersions = listOf(
-    "0.8.5",
-    "0.8.7",
-)
+buildConfig {
+    packageName("com.llamalad7.mixintests.harness")
+    className("MixinArtifacts")
+    useJavaOutput()
 
-val jarFiles = mixinVersions.flatMap { version ->
-    val config = configurations.detachedConfiguration(
-        dependencies.create("org.spongepowered:mixin:$version")
-    )
-    config.applyMixinPatches()
-    config.resolve()
+    buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
+    buildConfigField("FABRIC_MIXIN_JARS", FABRIC_MIXIN_VERSIONS.associateWith(project::fabricMixinJar))
+    buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
 }
 
 java {
@@ -65,5 +63,4 @@ tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
-    systemProperty("mixintests.mixinvariants", jarFiles.joinToString(";") { it.absolutePath })
 }
