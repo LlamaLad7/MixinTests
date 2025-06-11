@@ -29,4 +29,13 @@ public record MixinVersions(Version mixinVersion, Version mixinExtrasVersion, bo
         }
         return Version.parse(mixinVersion.toString().split("\\+mixin\\.")[1]);
     }
+
+    public boolean isLatestMixin() {
+        return mixinVersion.equals(MixinVersionInfo.MIXIN_VERSIONS.last()) ||
+                mixinVersion.equals(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last());
+    }
+
+    public boolean isLatestMixinExtras() {
+        return mixinExtrasVersion.equals(MixinVersionInfo.MIXINEXTRAS_VERSIONS.last());
+    }
 }

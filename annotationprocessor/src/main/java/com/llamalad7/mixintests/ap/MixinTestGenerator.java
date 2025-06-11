@@ -46,13 +46,12 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
                 .returns(ParameterizedTypeName.get(ClassName.get(Stream.class), DYNAMIC_TEST))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(TEST_ANNOTATION)
-                .addCode("return $T.doTest($S);", TEST_BOOTSTRAP, config.getFileName())
+                .addCode("return $T.doTest($S, $S);", TEST_BOOTSTRAP, config.getGroupName(), config.getFileName())
                 .build();
     }
 
-    private String testMethodName(String configName) {
-        String shortName = StringUtils.removeStart(configName, MIXINS_PACKAGE + '.');
-        String[] parts = shortName.split("\\.");
+    private String testMethodName(String groupName) {
+        String[] parts = groupName.split("\\.");
         return "test" + String.join("", Arrays.stream(parts).map(StringUtils::capitalize).toList());
     }
 }

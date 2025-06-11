@@ -34,6 +34,9 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter")
     implementation("org.junit.platform:junit-platform-launcher:1.11.0")
     implementation("com.github.zafarkhaja:java-semver:0.10.2")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("com.roscopeco.jasm:jasm:0.7.0")
+    implementation("org.opentest4j:opentest4j:1.3.0")
 }
 
 buildConfig {

@@ -17,12 +17,12 @@ public class MixinTestConfig {
     private final boolean required = true;
     private InjectorOptions injectors = new InjectorOptions(1);
     private final List<String> mixins;
-    private transient final String groupName;
+    private transient final String groupClassName;
 
     public MixinTestConfig(TypeElement test) {
         this.pkg = PACKAGE;
         this.mixins = getMixinNames(test);
-        this.groupName = test.getQualifiedName().toString();
+        this.groupClassName = test.getQualifiedName().toString();
     }
 
     private static List<String> getMixinNames(TypeElement test) {
@@ -38,11 +38,11 @@ public class MixinTestConfig {
     }
 
     public String getGroupName() {
-        return groupName;
+        return StringUtils.removeStart(groupClassName, PACKAGE + '.');
     }
 
     public String getFileName() {
-        return groupName + ".mixins.json";
+        return groupClassName + ".mixins.json";
     }
 
     private record InjectorOptions(int defaultRequire) {

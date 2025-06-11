@@ -1,6 +1,7 @@
 package com.llamalad7.mixintests.harness;
 
 import com.github.zafarkhaja.semver.Version;
+import com.llamalad7.mixintests.golden.GoldenTest;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.jupiter.api.DynamicTest;
@@ -14,14 +15,14 @@ public class TestBootstrap {
     private static final String TEST_UTILS = "com.llamalad7.mixintests.service.TestUtils";
     private static final String DO_TEST = "doTest";
 
-    public static Stream<DynamicTest> doTest(String configName) {
+    public static Stream<DynamicTest> doTest(String testName, String configName) {
         return getMixinVersions()
                 .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
-                    doTest(configName, versions);
+                    doTest(testName, configName, versions);
                 }));
     }
 
-    private static void doTest(String configName, MixinVersions mixinVersions) {
+    private static void doTest(String testName, String configName, MixinVersions mixinVersions) {
         TestResult result;
         try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
             result = sandbox.doTest(() -> {
@@ -34,7 +35,7 @@ public class TestBootstrap {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(result);
+        new GoldenTest(testName, result, mixinVersions).test();
     }
 
     private static Stream<MixinVersions> getMixinVersions() {
