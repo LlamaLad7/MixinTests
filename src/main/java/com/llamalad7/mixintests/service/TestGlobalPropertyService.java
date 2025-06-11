@@ -37,5 +37,6 @@ public class TestGlobalPropertyService implements IGlobalPropertyService {
         return getProperty(key, defaultValue);
     }
 
-    private record PropertyKey(String name) implements IPropertyKey {}
+    private record PropertyKey(String name) implements IPropertyKey {
+    }
 }

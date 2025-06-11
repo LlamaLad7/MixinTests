@@ -25,13 +25,15 @@ fun changeExportDir(node: ClassNode) {
     while (it.hasNext()) {
         val insn = it.next()
         if (insn is LdcInsnNode && insn.cst == ".mixin.out") {
-            it.set(MethodInsnNode(
-                Opcodes.INVOKESTATIC,
-                HOOK_CLASS.internalName,
-                "getMixinOutputDir",
-                Type.getMethodDescriptor(Type.getType(String::class.java)),
-                false,
-            ))
+            it.set(
+                MethodInsnNode(
+                    Opcodes.INVOKESTATIC,
+                    HOOK_CLASS.internalName,
+                    "getMixinOutputDir",
+                    Type.getMethodDescriptor(Type.getType(String::class.java)),
+                    false,
+                )
+            )
         }
     }
 }

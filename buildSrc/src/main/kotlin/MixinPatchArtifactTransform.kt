@@ -4,7 +4,6 @@ import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
-import org.objectweb.asm.ClassVisitor
 
 abstract class MixinPatchArtifactTransform : TransformAction<TransformParameters.None> {
     @get:InputArtifact

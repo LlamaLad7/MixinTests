@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Element;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,5 +45,6 @@ public class MixinTestConfig {
         return groupName + ".mixins.json";
     }
 
-    private record InjectorOptions(int defaultRequire) {}
+    private record InjectorOptions(int defaultRequire) {
+    }
 }
