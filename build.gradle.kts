@@ -65,6 +65,7 @@ sourceSets {
 }
 
 tasks.withType<Test> {
+    inputs.dir("test-outputs")
     useJUnitPlatform()
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
