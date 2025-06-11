@@ -68,4 +68,7 @@ tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
+    if (project.hasProperty("force")) {
+        systemProperty("forceGoldenTests", "true")
+    }
 }
