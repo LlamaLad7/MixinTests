@@ -1,7 +1,7 @@
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
 
 plugins {
-    id("java")
+    java
     `mixintests-patched-mixin`
     id("com.github.gmazzo.buildconfig")
 }

@@ -15,24 +15,21 @@ fun transformJar(inputJar: File, outputJar: File, transformer: (ClassNode) -> Un
                     continue
                 }
                 val entryInputStream = input.getInputStream(entry)
-                val entryBytes = entryInputStream.readBytes()
+                output.putNextEntry(ZipEntry(entry.name))
 
                 if (entry.name.endsWith(".class")) {
+                    val entryBytes = entryInputStream.readBytes()
                     val node = ClassNode()
                     ClassReader(entryBytes).accept(node, 0)
                     transformer(node)
                     val writer = ClassWriter(ClassWriter.COMPUTE_MAXS)
                     node.accept(writer)
-
-                    val newEntry = ZipEntry(entry.name)
-                    output.putNextEntry(newEntry)
                     output.write(writer.toByteArray())
-                    output.closeEntry()
                 } else {
-                    output.putNextEntry(ZipEntry(entry.name))
-                    output.write(entryBytes)
-                    output.closeEntry()
+                    entryInputStream.copyTo(output)
                 }
+
+                output.closeEntry()
             }
         }
     }
