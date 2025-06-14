@@ -79,6 +79,7 @@ sourceSets {
 tasks.withType<Test> {
     inputs.dir(Props.TEST_OUTPUT_DIR)
     useJUnitPlatform()
+    include("com/llamalad7/mixintests/tests/*")
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
     if (project.hasProperty("force")) {
@@ -86,8 +87,6 @@ tasks.withType<Test> {
     }
     doFirst {
         val isFiltered = (filter as DefaultTestFilter).commandLineIncludePatterns.isNotEmpty()
-                || filter.includePatterns.isNotEmpty()
-                || filter.excludePatterns.isNotEmpty()
         systemProperty(Props.TESTS_FILTERED, isFiltered)
     }
 }
