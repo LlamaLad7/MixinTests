@@ -3,6 +3,7 @@ package com.llamalad7.mixintests.golden;
 import com.llamalad7.mixintests.harness.TestResult;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import com.roscopeco.jasm.JasmDisassembler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.FileInfo;
@@ -43,6 +44,14 @@ public class GoldenTest {
             for (Error error : errors) {
                 throw error;
             }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void cleanOutputs() {
+        try {
+            FileUtils.deleteDirectory(classOutputDir.toFile());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

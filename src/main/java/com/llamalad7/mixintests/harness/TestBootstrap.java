@@ -23,7 +23,13 @@ public class TestBootstrap {
             throw new RuntimeException(e);
         }
         return getMixinVersions()
-                .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
+                .filter(versions -> {
+                    if (!TestFilterer.shouldRun(versions, testInstance)) {
+                        new GoldenTest(testName, null, versions).cleanOutputs();
+                        return false;
+                    }
+                    return true;
+                })
                 .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
                     doTest(testName, configName, testInstance, versions);
                 }));
