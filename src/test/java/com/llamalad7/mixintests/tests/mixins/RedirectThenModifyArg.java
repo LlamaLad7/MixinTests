@@ -1,13 +1,13 @@
 package com.llamalad7.mixintests.tests.mixins;
 
-import com.llamalad7.mixintests.ap.annotations.MixinTestGroup;
+import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.tests.targets.ExampleTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@MixinTestGroup(box = ExampleTarget.class, minMixin = "0.8.6", minFabricMixin = "0.13.0+mixin.0.8.5")
+@MixinTest(box = ExampleTarget.class, minMixin = "0.8.6", minFabricMixin = "0.13.0+mixin.0.8.5")
 public class RedirectThenModifyArg {
     @Mixin(ExampleTarget.class)
     static class Redirector {

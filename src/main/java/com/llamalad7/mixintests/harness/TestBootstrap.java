@@ -1,7 +1,7 @@
 package com.llamalad7.mixintests.harness;
 
 import com.github.zafarkhaja.semver.Version;
-import com.llamalad7.mixintests.ap.annotations.MixinTestGroup;
+import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.golden.GoldenTest;
 import com.llamalad7.mixintests.harness.tests.TestBox;
 import com.llamalad7.mixintests.harness.tests.TestFilterer;
@@ -30,7 +30,7 @@ public class TestBootstrap {
     }
 
     private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
-        Class<? extends TestBox> boxClass = testInstance.getClass().getAnnotation(MixinTestGroup.class).box();
+        Class<? extends TestBox> boxClass = testInstance.getClass().getAnnotation(MixinTest.class).box();
         TestResult result;
         try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
             result = sandbox.doTest(() -> {

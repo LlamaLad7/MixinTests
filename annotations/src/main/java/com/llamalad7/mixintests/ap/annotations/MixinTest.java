@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface MixinTestGroup {
+public @interface MixinTest {
     Class<? extends TestBox> box();
 
     String minMixin() default "";

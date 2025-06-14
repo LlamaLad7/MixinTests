@@ -42,22 +42,22 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
     }
 
     private MethodSpec generateTest(MixinTestConfig config) {
-        return MethodSpec.methodBuilder(testMethodName(config.getGroupName()))
+        return MethodSpec.methodBuilder(testMethodName(config.getTestName()))
                 .returns(ParameterizedTypeName.get(ClassName.get(Stream.class), DYNAMIC_TEST))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(TEST_ANNOTATION)
                 .addCode(
                         "return $T.doTest($S, $S, $T.class);",
                         TEST_BOOTSTRAP,
-                        config.getGroupName(),
+                        config.getTestName(),
                         config.getFileName(),
-                        ClassName.get(config.getTestGroup())
+                        ClassName.get(config.getTestClass())
                 )
                 .build();
     }
 
-    private String testMethodName(String groupName) {
-        String[] parts = groupName.split("\\.");
+    private String testMethodName(String testName) {
+        String[] parts = testName.split("\\.");
         return "test" + String.join("", Arrays.stream(parts).map(StringUtils::capitalize).toList());
     }
 }

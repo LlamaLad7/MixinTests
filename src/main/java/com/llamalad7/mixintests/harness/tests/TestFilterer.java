@@ -1,7 +1,7 @@
 package com.llamalad7.mixintests.harness.tests;
 
 import com.github.zafarkhaja.semver.Version;
-import com.llamalad7.mixintests.ap.annotations.MixinTestGroup;
+import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 
 public class TestFilterer {
@@ -9,10 +9,10 @@ public class TestFilterer {
         if (testInstance instanceof RestrictedTest restricted) {
             return restricted.shouldRun(versions);
         }
-        return shouldRun(versions, testInstance.getClass().getAnnotation(MixinTestGroup.class));
+        return shouldRun(versions, testInstance.getClass().getAnnotation(MixinTest.class));
     }
 
-    public static boolean shouldRun(MixinVersions versions, MixinTestGroup ann) {
+    public static boolean shouldRun(MixinVersions versions, MixinTest ann) {
         if (!ann.fabricMixin().permits(versions.isFabric()) || !ann.mixinExtras().permits(versions.hasMixinExtras())) {
             return false;
         }

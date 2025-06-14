@@ -2,7 +2,7 @@ package com.llamalad7.mixintests.ap;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.Gson;
-import com.llamalad7.mixintests.ap.annotations.MixinTestGroup;
+import com.llamalad7.mixintests.ap.annotations.MixinTest;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
@@ -19,7 +19,7 @@ import java.util.Set;
 
 @AutoService(Processor.class)
 public class MixinTestsAP extends AbstractProcessor {
-    private static final Class<? extends Annotation> ANNOTATION = MixinTestGroup.class;
+    private static final Class<? extends Annotation> ANNOTATION = MixinTest.class;
     private static final String ANNOTATION_NAME = ANNOTATION.getName();
 
     private final Gson gson = new Gson();
