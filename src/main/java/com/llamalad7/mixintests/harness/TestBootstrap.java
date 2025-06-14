@@ -5,16 +5,22 @@ import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.golden.GoldenTest;
 import com.llamalad7.mixintests.harness.tests.TestBox;
 import com.llamalad7.mixintests.harness.tests.TestFilterer;
+import com.llamalad7.mixintests.harness.util.DirectoryPruner;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class TestBootstrap {
+    private static final Set<Path> outputPaths = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
     public static Stream<DynamicTest> doTest(String testName, String configName, Class<?> testClass) {
         Object testInstance;
         try {
@@ -23,16 +29,14 @@ public class TestBootstrap {
             throw new RuntimeException(e);
         }
         return getMixinVersions()
-                .filter(versions -> {
-                    if (!TestFilterer.shouldRun(versions, testInstance)) {
-                        new GoldenTest(testName, null, versions).cleanOutputs();
-                        return false;
-                    }
-                    return true;
-                })
+                .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
                 .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
                     doTest(testName, configName, testInstance, versions);
                 }));
+    }
+
+    public static void afterTests() {
+        cleanStaleOutputs();
     }
 
     private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
@@ -71,4 +75,18 @@ public class TestBootstrap {
         return result.stream();
     }
 
+    public static void touchedOutput(Path path) {
+        outputPaths.add(path);
+    }
+
+    private static void cleanStaleOutputs() {
+        if (BuildConstants.TESTS_FILTERED) {
+            return;
+        }
+        try {
+            new DirectoryPruner(outputPaths).prune(Path.of(BuildConstants.TEST_OUTPUT_DIR));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

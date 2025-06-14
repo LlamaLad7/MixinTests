@@ -1,7 +1,9 @@
+import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+
 plugins {
     id("java")
     `mixintests-patched-mixin`
-    id("com.github.gmazzo.buildconfig") version "5.6.5"
+    id("com.github.gmazzo.buildconfig")
 }
 
 group = "com.llamalad7"
@@ -39,14 +41,24 @@ dependencies {
     implementation("org.opentest4j:opentest4j:1.3.0")
 }
 
-buildConfig {
-    packageName("com.llamalad7.mixintests.harness")
-    className("MixinArtifacts")
-    useJavaOutput()
+object Props {
+    const val TEST_OUTPUT_DIR = "test-outputs"
+    const val FORCE_GOLDEN_TESTS = "forceGoldenTests"
+    const val TESTS_FILTERED = "tests.filtered"
+}
 
-    buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
-    buildConfigField("FABRIC_MIXIN_JARS", FABRIC_MIXIN_VERSIONS.associateWith(project::fabricMixinJar))
-    buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
+buildConfig {
+    useJavaOutput()
+    forClass(packageName = "com.llamalad7.mixintests.harness", className = "MixinArtifacts") {
+        buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
+        buildConfigField("FABRIC_MIXIN_JARS", FABRIC_MIXIN_VERSIONS.associateWith(project::fabricMixinJar))
+        buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
+    }
+    forClass(packageName = "com.llamalad7.mixintests.harness", className = "BuildConstants") {
+        verbatimPropField(Props::TEST_OUTPUT_DIR)
+        systemPropField(Props::FORCE_GOLDEN_TESTS, false)
+        systemPropField(Props::TESTS_FILTERED, true)
+    }
 }
 
 java {
@@ -65,11 +77,17 @@ sourceSets {
 }
 
 tasks.withType<Test> {
-    inputs.dir("test-outputs")
+    inputs.dir(Props.TEST_OUTPUT_DIR)
     useJUnitPlatform()
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
     if (project.hasProperty("force")) {
-        systemProperty("forceGoldenTests", "true")
+        systemProperty(Props.FORCE_GOLDEN_TESTS, "true")
+    }
+    doFirst {
+        val isFiltered = (filter as DefaultTestFilter).commandLineIncludePatterns.isNotEmpty()
+                || filter.includePatterns.isNotEmpty()
+                || filter.excludePatterns.isNotEmpty()
+        systemProperty(Props.TESTS_FILTERED, isFiltered)
     }
 }

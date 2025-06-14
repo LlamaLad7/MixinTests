@@ -14,4 +14,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.palantir.javapoet:javapoet:0.7.0")
     implementation("org.apache.commons:commons-lang3:3.17.0")
+    implementation("org.junit.jupiter:junit-jupiter:5.11.0")
 }
