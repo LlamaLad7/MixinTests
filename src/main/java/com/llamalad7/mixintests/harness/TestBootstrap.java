@@ -1,7 +1,10 @@
 package com.llamalad7.mixintests.harness;
 
 import com.github.zafarkhaja.semver.Version;
+import com.llamalad7.mixintests.ap.annotations.MixinTestGroup;
 import com.llamalad7.mixintests.golden.GoldenTest;
+import com.llamalad7.mixintests.harness.tests.TestBox;
+import com.llamalad7.mixintests.harness.tests.TestFilterer;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import org.junit.jupiter.api.DynamicTest;
@@ -12,25 +15,32 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class TestBootstrap {
-    private static final String TEST_UTILS = "com.llamalad7.mixintests.service.TestUtils";
-    private static final String DO_TEST = "doTest";
-
-    public static Stream<DynamicTest> doTest(String testName, String configName) {
+    public static Stream<DynamicTest> doTest(String testName, String configName, Class<?> testClass) {
+        Object testInstance;
+        try {
+            testInstance = testClass.getConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
         return getMixinVersions()
+                .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
                 .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
-                    doTest(testName, configName, versions);
+                    doTest(testName, configName, testInstance, versions);
                 }));
     }
 
-    private static void doTest(String testName, String configName, MixinVersions mixinVersions) {
+    private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
+        Class<? extends TestBox> boxClass = testInstance.getClass().getAnnotation(MixinTestGroup.class).box();
         TestResult result;
         try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
             result = sandbox.doTest(() -> {
+                TestBox box;
                 try {
-                    return (String) sandbox.loadClass(TEST_UTILS).getMethod(DO_TEST).invoke(null);
+                    box = (TestBox) sandbox.loadClass(boxClass.getName()).getConstructor().newInstance();
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
+                return box.box();
             });
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -10,7 +10,10 @@ import java.util.Objects;
 public record MixinVersions(Version mixinVersion, Version mixinExtrasVersion, boolean isFabric) {
     @Override
     public String toString() {
-        return "Mixin %s, MixinExtras %s".formatted(mixinVersion, mixinExtrasVersion);
+        return "%sMixin %s, MixinExtras %s".formatted(
+                isFabric ? "Fabric " : "",
+                mixinVersion, mixinExtrasVersion
+        );
     }
 
     public List<File> getJars() {

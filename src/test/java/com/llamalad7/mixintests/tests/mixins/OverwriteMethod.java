@@ -5,13 +5,13 @@ import com.llamalad7.mixintests.tests.targets.ExampleTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 
-@MixinTestGroup
+@MixinTestGroup(box = ExampleTarget.class)
 public class OverwriteMethod {
     @Mixin(ExampleTarget.class)
     static class Overwriter {
         @Overwrite
-        public static int getEleven() {
-            return 5;
+        public String box() {
+            return "custom text";
         }
     }
 }

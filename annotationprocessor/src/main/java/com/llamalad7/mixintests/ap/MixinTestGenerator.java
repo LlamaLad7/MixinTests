@@ -46,7 +46,13 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
                 .returns(ParameterizedTypeName.get(ClassName.get(Stream.class), DYNAMIC_TEST))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(TEST_ANNOTATION)
-                .addCode("return $T.doTest($S, $S);", TEST_BOOTSTRAP, config.getGroupName(), config.getFileName())
+                .addCode(
+                        "return $T.doTest($S, $S, $T.class);",
+                        TEST_BOOTSTRAP,
+                        config.getGroupName(),
+                        config.getFileName(),
+                        ClassName.get(config.getTestGroup())
+                )
                 .build();
     }
 

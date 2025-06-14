@@ -7,21 +7,21 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@MixinTestGroup
-public class RedirectMethodCall {
+@MixinTestGroup(box = ExampleTarget.class)
+public class RedirectThenModifyArg {
     @Mixin(ExampleTarget.class)
     static class Redirector {
-        @Redirect(method = "getEleven", at = @At(value = "INVOKE", target = "Ljava/lang/Math;floor(D)D"))
-        private static double test(double a) {
-            return 100;
+        @Redirect(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"))
+        private String test(String instance, int i) {
+            return "goodbye".repeat(i);
         }
     }
 
     @Mixin(value = ExampleTarget.class, priority = 1500)
     static class LateMixin {
-        @ModifyArg(method = "getEleven", at = @At(value = "INVOKE", target = "Ljava/lang/Math;floor(D)D"))
-        private static double test(double a) {
-            return 1000;
+        @ModifyArg(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"), index = 0)
+        private int test(int count) {
+            return 3;
         }
     }
 }
