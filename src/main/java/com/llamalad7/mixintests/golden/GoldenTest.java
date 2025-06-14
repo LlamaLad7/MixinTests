@@ -66,7 +66,7 @@ public class GoldenTest {
     }
 
     private Path chooseClassOutputDir() {
-        return baseOutputDir.resolve("classes").resolve(chooseDirName(mixinVersions));
+        return baseOutputDir.resolve("classes").resolve(mixinVersions.getSlug());
     }
 
     private void checkFile(Path file, String actual, boolean canForce) throws IOException {
@@ -93,12 +93,5 @@ public class GoldenTest {
                     )
             );
         }
-    }
-
-    private static String chooseDirName(MixinVersions mixinVersions) {
-        String mixinVariant = mixinVersions.isFabric() ? "fabric-mixin" : "mixin";
-        String mixinString = mixinVersions.isLatestMixin() ? "latest" : mixinVersions.mixinVersion().toString();
-        String mixinExtrasString = mixinVersions.isLatestMixinExtras() ? "latest" : mixinVersions.mixinExtrasVersion().toString();
-        return "%s-%s-mixinextras-%s".formatted(mixinVariant, mixinString, mixinExtrasString);
     }
 }

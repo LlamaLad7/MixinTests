@@ -51,7 +51,11 @@ public class IsolatedClassLoader extends URLClassLoader {
             mixinExtrasClassCache = null;
         } else {
             mixinClassCache = mixinClassCaches.computeIfAbsent(mixinVersions.mixinVersion(), k -> new ConcurrentHashMap<>());
-            mixinExtrasClassCache = mixinExtrasClassCaches.computeIfAbsent(mixinVersions.mixinExtrasVersion(), k -> new ConcurrentHashMap<>());
+            if (mixinVersions.hasMixinExtras()) {
+                mixinExtrasClassCache = mixinExtrasClassCaches.computeIfAbsent(mixinVersions.mixinExtrasVersion(), k -> new ConcurrentHashMap<>());
+            } else {
+                mixinExtrasClassCache = null;
+            }
         }
     }
 

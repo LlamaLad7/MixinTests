@@ -13,7 +13,9 @@ public class MixinSetup {
 
     public static void init(String configName) {
         MixinBootstrap.init();
-        MixinExtrasBootstrap.init();
+        if (TestUtils.getSandboxInfo().mixinVersions().hasMixinExtras()) {
+            MixinExtrasBootstrap.init();
+        }
         addMixinConfig(configName);
         finishMixinBootstrapping();
     }

@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@MixinTestGroup(box = ExampleTarget.class)
+@MixinTestGroup(box = ExampleTarget.class, minMixin = "0.8.6", minFabricMixin = "0.13.0+mixin.0.8.5")
 public class RedirectThenModifyArg {
     @Mixin(ExampleTarget.class)
     static class Redirector {

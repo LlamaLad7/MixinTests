@@ -20,5 +20,5 @@ public @interface MixinTestGroup {
 
     TestOption fabricMixin() default TestOption.BOTH;
 
-    TestOption mixinExtras() default TestOption.ON;
+    TestOption mixinExtras() default TestOption.OFF;
 }

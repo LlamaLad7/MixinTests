@@ -60,6 +60,8 @@ public class TestBootstrap {
             result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), mixinExtrasVersion, false));
             result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), mixinExtrasVersion, true));
         }
+        result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), null, false));
+        result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), null, true));
         return result.stream();
     }
 
