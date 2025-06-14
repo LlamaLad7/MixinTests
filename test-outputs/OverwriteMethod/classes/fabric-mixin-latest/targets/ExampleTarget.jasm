@@ -1,0 +1,34 @@
+/*
+ * Disassembled from ExampleTarget (originally ExampleTarget.java) by JASM
+ *
+ * Original class version: 65
+ * Signature: Ljava/lang/Object;Lcom/llamalad7/mixintests/harness/tests/TestBox;
+ */
+public class com/llamalad7/mixintests/tests/targets/ExampleTarget implements com/llamalad7/mixintests/harness/tests/TestBox {
+    // <no signature>
+    // <no exceptions>
+    public <init>()V {
+
+        label0:
+        aload 0
+        invokespecial java/lang/Object.<init>()V
+        return
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/Overwrite
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.OverwriteMethod$Overwriter", priority = 1000, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    public box()java/lang/String {
+
+        label0:
+        ldc "custom text"
+        areturn
+
+        label1:
+    }
+
+}

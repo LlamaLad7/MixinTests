@@ -1,0 +1,89 @@
+/*
+ * Disassembled from ExampleStaticTarget (originally ExampleStaticTarget.java) by JASM
+ *
+ * Original class version: 65
+ * Signature: Ljava/lang/Object;Lcom/llamalad7/mixintests/harness/tests/TestBox;
+ */
+public class com/llamalad7/mixintests/tests/targets/ExampleStaticTarget implements com/llamalad7/mixintests/harness/tests/TestBox {
+    // <no signature>
+    // <no exceptions>
+    public <init>()V {
+
+        label0:
+        aload 0
+        invokespecial java/lang/Object.<init>()V
+        return
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    public box()java/lang/String {
+
+        label0:
+        invokestatic com/llamalad7/mixintests/tests/targets/ExampleStaticTarget.staticBox()java/lang/String
+        areturn
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    private static staticBox()java/lang/String {
+
+        label0:
+        ldc "hello"
+        iconst 2
+        istore 1
+        astore 0
+        aload 0
+        iload 1
+        istore 1
+        astore 0
+        aload 0
+        iload 1
+        invokestatic com/llamalad7/mixintests/tests/targets/ExampleStaticTarget.modifyReceiver$zzb001$test(java/lang/String, I)java/lang/String
+        iload 1
+        invokestatic com/llamalad7/mixintests/tests/targets/ExampleStaticTarget.redirect$zza000$test(java/lang/String, I)java/lang/String
+        areturn
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.ModifyReceiverOnStaticRedirect$EarlyMixin", priority = 1000, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private static redirect$zza000$test(java/lang/String, I)java/lang/String {
+
+        label0:
+        ldc "oops"
+        iload 1
+        invokevirtual java/lang/String.repeat(I)java/lang/String
+        areturn
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.ModifyReceiverOnStaticRedirect$LateMixin", priority = 1500, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private static modifyReceiver$zzb001$test(java/lang/String, I)java/lang/String {
+
+        label0:
+        aload 0
+        invokedynamic makeConcatWithConstants(java/lang/String)java/lang/String {
+            invokestatic java/lang/invoke/StringConcatFactory.makeConcatWithConstants(java/lang/invoke/MethodHandles$Lookup, java/lang/String, java/lang/invoke/MethodType, java/lang/String, [java/lang/Object)java/lang/invoke/CallSite
+            ["ies"]
+        }
+
+        areturn
+
+        label1:
+    }
+
+}
