@@ -5,6 +5,7 @@ import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.golden.GoldenTest;
 import com.llamalad7.mixintests.harness.tests.TestBox;
 import com.llamalad7.mixintests.harness.tests.TestFilterer;
+import com.llamalad7.mixintests.harness.util.CiUtil;
 import com.llamalad7.mixintests.harness.util.DirectoryPruner;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
@@ -80,7 +81,7 @@ public class TestBootstrap {
     }
 
     private static void cleanStaleOutputs() {
-        if (BuildConstants.TESTS_FILTERED) {
+        if (BuildConstants.TESTS_FILTERED || CiUtil.IS_CI) {
             return;
         }
         try {

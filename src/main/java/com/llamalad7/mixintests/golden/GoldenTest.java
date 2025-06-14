@@ -3,6 +3,7 @@ package com.llamalad7.mixintests.golden;
 import com.llamalad7.mixintests.harness.BuildConstants;
 import com.llamalad7.mixintests.harness.TestBootstrap;
 import com.llamalad7.mixintests.harness.TestResult;
+import com.llamalad7.mixintests.harness.util.CiUtil;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 import com.roscopeco.jasm.JasmDisassembler;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 public class GoldenTest {
-    private static final boolean CI = System.getenv("CI") != null;
     private static final String TEST_PACKAGE = "com.llamalad7.mixintests.tests.";
     private static final Path OUTPUT_DIR = Path.of(BuildConstants.TEST_OUTPUT_DIR);
 
@@ -73,7 +73,7 @@ public class GoldenTest {
         actual = GoldenUtils.normalize(actual);
         Files.createDirectories(file.getParent());
         if (!Files.exists(file)) {
-            if (!CI) {
+            if (!CiUtil.IS_CI) {
                 Files.writeString(file, actual);
             }
             errors.add(new AssertionFailedError("Expected file %s did not exist!".formatted(file)));
