@@ -1,5 +1,7 @@
 package com.llamalad7.mixintests.service;
 
+import com.llamalad7.mixintests.harness.SandboxInfo;
+
 import java.util.Random;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ public class MixinHooks {
     }
 
     public static String getMixinOutputDir() {
-        return ".mixin.out/" + TestUtils.getSandboxInfo().mixinConfig();
+        SandboxInfo info = TestUtils.getSandboxInfo();
+        return ".mixin.out/" + info.mixinConfig() + '/' + info.mixinVersions().getSlug();
     }
 }
