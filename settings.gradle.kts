@@ -1,3 +1,3 @@
 rootProject.name = "MixinTests"
+include("annotations")
 include("targets")
-include("annotationprocessor")

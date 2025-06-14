@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation(project("targets"))
-    implementation(testAnnotationProcessor(project("annotationprocessor"))!!)
+    implementation(testAnnotationProcessor(project("annotations"))!!)
     implementation(annotationProcessor("com.google.auto.service:auto-service:1.1.1")!!)
     compileOnly(testCompileOnly("org.spongepowered:mixin:0.8.7")!!)
     compileOnly(testCompileOnly("io.github.llamalad7:mixinextras-common:0.4.1")!!)
