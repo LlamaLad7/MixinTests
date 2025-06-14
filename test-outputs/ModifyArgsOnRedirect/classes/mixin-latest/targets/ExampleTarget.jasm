@@ -1,0 +1,79 @@
+/*
+ * Disassembled from ExampleTarget (originally ExampleTarget.java) by JASM
+ *
+ * Original class version: 65
+ * Signature: Ljava/lang/Object;Lcom/llamalad7/mixintests/harness/tests/TestBox;
+ */
+public class com/llamalad7/mixintests/tests/targets/ExampleTarget implements com/llamalad7/mixintests/harness/tests/TestBox {
+    // <no signature>
+    // <no exceptions>
+    public <init>()V {
+
+        label0:
+        aload 0
+        invokespecial java/lang/Object.<init>()V
+        return
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    public box()java/lang/String {
+
+        label0:
+        ldc "hello"
+        iconst 2
+        invokestatic org/spongepowered/asm/synthetic/args/Args$1.of(I)org/spongepowered/asm/synthetic/args/Args$1
+        dup
+        aload 0
+        swap
+        invokespecial com/llamalad7/mixintests/tests/targets/ExampleTarget.args$zzb000$test(org/spongepowered/asm/mixin/injection/invoke/arg/Args)V
+        invokevirtual org/spongepowered/asm/synthetic/args/Args$1.$0()I
+        istore 2
+        astore 1
+        aload 0
+        aload 1
+        iload 2
+        invokespecial com/llamalad7/mixintests/tests/targets/ExampleTarget.redirect$zza000$test(java/lang/String, I)java/lang/String
+        areturn
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.ModifyArgsOnRedirect$Redirector", priority = 1000, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private redirect$zza000$test(java/lang/String, I)java/lang/String {
+
+        label0:
+        ldc "goodbye"
+        iload 2
+        invokevirtual java/lang/String.repeat(I)java/lang/String
+        areturn
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.ModifyArgsOnRedirect$LateMixin", priority = 1500, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private args$zzb000$test(org/spongepowered/asm/mixin/injection/invoke/arg/Args)V {
+
+        label0:
+        aload 1
+        iconst 0
+        iconst 3
+        invokestatic java/lang/Integer.valueOf(I)java/lang/Integer
+        invokevirtual org/spongepowered/asm/mixin/injection/invoke/arg/Args.set(I, java/lang/Object)V
+
+        label1:
+        return
+
+        label2:
+    }
+
+}

@@ -18,6 +18,7 @@ import java.security.cert.Certificate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class IsolatedClassLoader extends URLClassLoader {
@@ -27,6 +28,7 @@ public class IsolatedClassLoader extends URLClassLoader {
 
     private static final URL[] CLASSPATH = getSystemClassPath();
     private static final String MIXIN_PACKAGE = "org.spongepowered.";
+    protected static final String MIXIN_SYNTHETIC_PACKAGE = "org.spongepowered.asm.synthetic.";
     private static final String MIXINEXTRAS_PACKAGE = "com.llamalad7.mixinextras.";
     private static final List<String> ISOLATED_PACKAGES = Arrays.asList(
             MIXIN_PACKAGE,
@@ -128,12 +130,9 @@ public class IsolatedClassLoader extends URLClassLoader {
     }
 
     protected byte[] getClassBytes(String className) {
-        Map<String, byte[]> cache =
-                className.startsWith(MIXIN_PACKAGE) ? mixinClassCache
-                        : className.startsWith(MIXINEXTRAS_PACKAGE) ? mixinExtrasClassCache
-                        : generalClassCache;
-        return cache.computeIfAbsent(className, name -> {
-            URL url = getResource(FileUtil.getClassFileName(className));
+        Map<String, byte[]> cache = chooseClassCache(className);
+        Function<String, byte[]> getBytes = name -> {
+            URL url = getResource(FileUtil.getClassFileName(name));
             if (url == null) {
                 return null;
             }
@@ -142,7 +141,22 @@ public class IsolatedClassLoader extends URLClassLoader {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
+        };
+        return cache == null ? getBytes.apply(className) : cache.computeIfAbsent(className, getBytes);
+    }
+
+    private Map<String, byte[]> chooseClassCache(String className) {
+        if (className.startsWith(MIXIN_SYNTHETIC_PACKAGE)) {
+            // Can't cache these
+            return null;
+        }
+        if (className.startsWith(MIXIN_PACKAGE)) {
+            return mixinClassCache;
+        }
+        if (className.startsWith(MIXINEXTRAS_PACKAGE)) {
+            return mixinExtrasClassCache;
+        }
+        return generalClassCache;
     }
 
     protected boolean shouldLoad(String className) {

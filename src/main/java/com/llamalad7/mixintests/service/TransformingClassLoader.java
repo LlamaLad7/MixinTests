@@ -3,11 +3,11 @@ package com.llamalad7.mixintests.service;
 import com.llamalad7.mixintests.harness.IsolatedClassLoader;
 import com.llamalad7.mixintests.harness.SandboxInfo;
 import com.llamalad7.mixintests.harness.TransformingClassLoaderBridge;
-import com.llamalad7.mixintests.harness.util.MixinClassDetector;
 import com.llamalad7.mixintests.tests.targets.DummyMixinTarget;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +16,10 @@ public class TransformingClassLoader extends IsolatedClassLoader implements Tran
         registerAsParallelCapable();
     }
 
-    private static final String TARGET_PACKAGE = "com.llamalad7.mixintests.tests.";
+    private static final List<String> TARGET_PACKAGES = List.of(
+            "com.llamalad7.mixintests.tests.",
+            MIXIN_SYNTHETIC_PACKAGE
+    );
 
     private static TransformingClassLoader INSTANCE;
 
@@ -36,17 +39,14 @@ public class TransformingClassLoader extends IsolatedClassLoader implements Tran
 
     @Override
     protected boolean shouldLoad(String className) {
-        return className.startsWith(TARGET_PACKAGE);
+        return TARGET_PACKAGES.stream().anyMatch(className::startsWith);
     }
 
     @Override
     protected byte[] getClassBytes(String name) {
         byte[] classBytes = super.getClassBytes(name);
-        if (classBytes == null) {
-            return null;
-        }
         byte[] transformedBytes = TestMixinService.transformer.transformClassBytes(name, name, classBytes);
-        if (transformedBytes != classBytes) {
+        if (classBytes != null && transformedBytes != classBytes) {
             postMixinClasses.putIfAbsent(name, transformedBytes);
         }
         return transformedBytes;
