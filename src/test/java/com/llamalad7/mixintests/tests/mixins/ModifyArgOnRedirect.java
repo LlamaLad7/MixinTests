@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @MixinTest(box = ExampleTarget.class)
-public class RedirectThenModifyArg {
+public class ModifyArgOnRedirect {
     @Mixin(ExampleTarget.class)
     static class Redirector {
         @Redirect(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"))
