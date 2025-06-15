@@ -21,4 +21,6 @@ public @interface MixinTest {
     TestOption fabricMixin() default TestOption.BOTH;
 
     TestOption mixinExtras() default TestOption.OFF;
+
+    boolean testBytecode() default false;
 }

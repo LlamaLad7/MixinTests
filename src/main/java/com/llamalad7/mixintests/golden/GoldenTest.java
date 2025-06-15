@@ -26,13 +26,15 @@ public class GoldenTest {
     private final TestResult result;
     private final MixinVersions mixinVersions;
     private final Path baseOutputDir;
+    private final boolean testBytecode;
     private final Path classOutputDir;
     private final List<Error> errors = new ArrayList<>();
 
-    public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions) {
+    public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions, boolean testBytecode) {
         this.result = result;
         this.mixinVersions = mixinVersions;
         this.baseOutputDir = OUTPUT_DIR.resolve(testName.replace('.', '/'));
+        this.testBytecode = testBytecode;
         this.classOutputDir = chooseClassOutputDir();
     }
 
@@ -49,10 +51,12 @@ public class GoldenTest {
 
     private void doTest() throws IOException {
         checkFile(baseOutputDir.resolve("output.txt"), result.output(), false);
-        for (Map.Entry<String, byte[]> entry : result.transformedClasses().entrySet()) {
-            String fileName = StringUtils.removeStart(entry.getKey(), TEST_PACKAGE).replace('.', '/') + ".jasm";
-            Path output = classOutputDir.resolve(fileName);
-            checkFile(output, disassembleClass(entry.getKey(), entry.getValue()), true);
+        if (testBytecode) {
+            for (Map.Entry<String, byte[]> entry : result.transformedClasses().entrySet()) {
+                String fileName = StringUtils.removeStart(entry.getKey(), TEST_PACKAGE).replace('.', '/') + ".jasm";
+                Path output = classOutputDir.resolve(fileName);
+                checkFile(output, disassembleClass(entry.getKey(), entry.getValue()), true);
+            }
         }
     }
 

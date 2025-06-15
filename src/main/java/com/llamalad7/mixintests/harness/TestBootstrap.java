@@ -41,7 +41,8 @@ public class TestBootstrap {
     }
 
     private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
-        Class<? extends TestBox> boxClass = testInstance.getClass().getAnnotation(MixinTest.class).box();
+        MixinTest testAnn = testInstance.getClass().getAnnotation(MixinTest.class);
+        Class<? extends TestBox> boxClass = testAnn.box();
         TestResult result;
         try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
             result = sandbox.doTest(() -> {
@@ -56,7 +57,7 @@ public class TestBootstrap {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        new GoldenTest(testName, result, mixinVersions).test();
+        new GoldenTest(testName, result, mixinVersions, testAnn.testBytecode()).test();
     }
 
     private static Stream<MixinVersions> getMixinVersions() {
