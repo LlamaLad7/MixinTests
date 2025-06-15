@@ -21,7 +21,8 @@ Each `@MixinTest` specifies a `box` (a class implementing `TextBox`) which has a
 provide the output of the test.
 
 The test outputs are found in [test-outputs](test-outputs). There is one directory per test containing an `output.txt`
-(the string returned by the `box`, which must be the same for all combinations of Mixin + MixinExtras), and also a
+(the string returned by the `box`, which must be the same for all combinations of Mixin + MixinExtras).
+You can enable `testBytecode = true` in the annotation, in which case there will also be a
 `classes` directory, which contains the transformed bytecode for any target classes in the test. These are used for
 Golden Testing. They are checked into version control to ensure they are not changed accidentally. You should inspect
 these when committing to ensure they look as expected. If changes to any of the upstream projects cause changes in these
