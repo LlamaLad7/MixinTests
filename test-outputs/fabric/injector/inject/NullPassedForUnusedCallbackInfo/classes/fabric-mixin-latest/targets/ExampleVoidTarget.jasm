@@ -1,0 +1,99 @@
+/*
+ * Disassembled from ExampleVoidTarget (originally ExampleVoidTarget.java) by JASM
+ *
+ * Original class version: 65
+ * Signature: Ljava/lang/Object;Lcom/llamalad7/mixintests/harness/tests/TestBox;
+ */
+public class com/llamalad7/mixintests/tests/targets/ExampleVoidTarget implements com/llamalad7/mixintests/harness/tests/TestBox {
+    // <no signature>
+    // <no exceptions>
+    public <init>()V {
+
+        label0:
+        aload 0
+        invokespecial java/lang/Object.<init>()V
+        return
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    public box()java/lang/String {
+
+        label0:
+        new java/lang/StringBuilder
+        dup
+        ldc "example"
+        invokespecial java/lang/StringBuilder.<init>(java/lang/String)V
+        astore 1
+
+        label1:
+        aload 0
+        aload 1
+        invokevirtual com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.modify(java/lang/StringBuilder)V
+
+        label2:
+        aload 1
+        invokevirtual java/lang/StringBuilder.toString()java/lang/String
+        aload 0
+        aconst_null
+        invokespecial com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.handler$zza000$test(org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable)V
+        areturn
+
+        label3:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    private modify(java/lang/StringBuilder)V {
+
+        label0:
+        aload 1
+        ldc " output"
+        invokevirtual java/lang/StringBuilder.append(java/lang/String)java/lang/StringBuilder
+        pop
+
+        label1:
+        aload 0
+        aload 1
+        aconst_null
+        invokespecial com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.handler$zza000$test(java/lang/StringBuilder, org/spongepowered/asm/mixin/injection/callback/CallbackInfo)V
+        return
+
+        label2:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.fabric.injector.inject.NullPassedForUnusedCallbackInfo$TheMixin", priority = 1000, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private handler$zza000$test(org/spongepowered/asm/mixin/injection/callback/CallbackInfoReturnable)V {
+
+        label0:
+        return
+
+        label1:
+    }
+
+
+    // <no signature>
+    // <no exceptions>
+    @org/spongepowered/asm/mixin/transformer/meta/MixinMerged(mixin = "com.llamalad7.mixintests.tests.mixins.fabric.injector.inject.NullPassedForUnusedCallbackInfo$TheMixin", priority = 1000, sessionId = "bb20b45f-d4d9-5138-3d93-cb799b3970be")
+    private handler$zza000$test(java/lang/StringBuilder, org/spongepowered/asm/mixin/injection/callback/CallbackInfo)V {
+
+        label0:
+        aload 1
+        ldc " modified"
+        invokevirtual java/lang/StringBuilder.append(java/lang/String)java/lang/StringBuilder
+        pop
+
+        label1:
+        return
+
+        label2:
+    }
+
+}
