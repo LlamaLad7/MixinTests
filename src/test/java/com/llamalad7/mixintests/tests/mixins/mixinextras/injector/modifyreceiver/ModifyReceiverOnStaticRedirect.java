@@ -1,4 +1,4 @@
-package com.llamalad7.mixintests.tests.mixins;
+package com.llamalad7.mixintests.tests.mixins.mixinextras.injector.modifyreceiver;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;

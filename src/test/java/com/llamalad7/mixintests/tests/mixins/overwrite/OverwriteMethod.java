@@ -1,4 +1,4 @@
-package com.llamalad7.mixintests.tests.mixins;
+package com.llamalad7.mixintests.tests.mixins.overwrite;
 
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.tests.targets.ExampleTarget;

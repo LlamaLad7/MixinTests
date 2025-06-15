@@ -1,15 +1,14 @@
-package com.llamalad7.mixintests.tests.mixins;
+package com.llamalad7.mixintests.tests.mixins.injector.modifyarg;
 
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.tests.targets.ExampleTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @MixinTest(box = ExampleTarget.class)
-public class ModifyArgsOnRedirect {
+public class ModifyArgOnRedirect {
     @Mixin(ExampleTarget.class)
     static class Redirector {
         @Redirect(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"))
@@ -20,9 +19,9 @@ public class ModifyArgsOnRedirect {
 
     @Mixin(value = ExampleTarget.class, priority = 1500)
     static class LateMixin {
-        @ModifyArgs(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"))
-        private void test(Args args) {
-            args.set(0, 3);
+        @ModifyArg(method = "box", at = @At(value = "INVOKE", target = "Ljava/lang/String;repeat(I)Ljava/lang/String;"), index = 0)
+        private int test(int count) {
+            return 3;
         }
     }
 }
