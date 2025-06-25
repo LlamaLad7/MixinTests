@@ -9,8 +9,10 @@ import com.llamalad7.mixintests.harness.util.CiUtil;
 import com.llamalad7.mixintests.harness.util.DirectoryPruner;
 import com.llamalad7.mixintests.harness.util.MixinVersionInfo;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.DynamicTest;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -34,6 +36,10 @@ public class TestBootstrap {
                 .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
                     doTest(testName, configName, testInstance, versions);
                 }));
+    }
+
+    public static void beforeTests() {
+        cleanMixinOut();
     }
 
     public static void afterTests() {
@@ -75,6 +81,14 @@ public class TestBootstrap {
         result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), null, false));
         result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), null, true));
         return result.stream();
+    }
+
+    private static void cleanMixinOut() {
+        try {
+            FileUtils.deleteDirectory(new File(".mixin.out"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void touchedOutput(Path path) {

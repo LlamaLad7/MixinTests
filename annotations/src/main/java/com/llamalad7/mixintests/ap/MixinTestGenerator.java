@@ -2,10 +2,7 @@ package com.llamalad7.mixintests.ap;
 
 import com.llamalad7.mixintests.ap.annotations.TestLocation;
 import com.palantir.javapoet.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
@@ -30,8 +27,9 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
     private JavaFile generateFile() {
         TypeSpec testClass = TypeSpec.classBuilder("GeneratedMixinTests")
                 .addModifiers(Modifier.PUBLIC)
-                .addMethods(generateMethods())
+                .addMethod(generateBeforeTestsMethod())
                 .addMethod(generateAfterTestsMethod())
+                .addMethods(generateMethods())
                 .build();
 
         return JavaFile.builder(TESTS_PACKAGE, testClass)
@@ -71,6 +69,15 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
     private String testMethodName(String testName) {
         String[] parts = testName.split("\\.");
         return "test$" + String.join("$", parts);
+    }
+
+    private MethodSpec generateBeforeTestsMethod() {
+        return MethodSpec.methodBuilder("beforeTests")
+                .returns(TypeName.VOID)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addAnnotation(BeforeAll.class)
+                .addCode("$T.beforeTests();", TEST_BOOTSTRAP)
+                .build();
     }
 
     private MethodSpec generateAfterTestsMethod() {
