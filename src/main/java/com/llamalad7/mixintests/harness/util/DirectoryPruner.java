@@ -28,6 +28,9 @@ public class DirectoryPruner {
         @Override
         public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attrs) throws IOException {
             if (!pathsToKeep.contains(normalize(file))) {
+                if (CiUtil.IS_CI) {
+                    throw new IllegalStateException("Found unused test output " + file);
+                }
                 Files.delete(file);
             }
             return FileVisitResult.CONTINUE;
