@@ -2,15 +2,12 @@ package com.llamalad7.mixintests.tests.targets;
 
 import com.llamalad7.mixintests.harness.tests.TestBox;
 
-public class IntComparisonTarget implements TestBox {
-    private final StringBuilder builder = new StringBuilder();
-
+public class IntComparisonTarget extends TestBox {
     @Override
-    public String box() {
+    protected void box() {
         int a = 65; // 'A'
-        builder.append("a: ").append(a).append('\n');
+        print("a: " + a);
         int b = 66; // 'B'
-        builder.append("b == 'B':\n").append(b == 'B');
-        return builder.toString();
+        print("b == 'B': " + (b == 'B'));
     }
 }

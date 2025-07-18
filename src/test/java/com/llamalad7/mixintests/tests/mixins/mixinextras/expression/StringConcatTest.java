@@ -9,32 +9,32 @@ import com.llamalad7.mixintests.tests.targets.StringConcatTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-@MixinTest(box = StringConcatTarget.class, mixinExtras = TestOption.ON, minMixinExtras = "0.5.0-rc.4")
+@MixinTest(box = StringConcatTarget.class, mixinExtras = TestOption.ON, minMixinExtras = "0.5.0-beta.1")
 public class StringConcatTest {
     @Mixin(StringConcatTarget.class)
     static class TheMixin {
         @Definition(id = "number", field = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;number:I")
-        @Expression("this.number + ' is a number\n'")
+        @Expression("this.number + ' is a number'")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private String wholeTwoPart(String original) {
-            return "v 2 parts\n" + original + "^ 2 parts\n\n";
+            return "v 2 parts\n" + original + "\n^ 2 parts\n";
         }
 
         @Definition(id = "doubleNumber", field = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;doubleNumber:D")
-        @Expression("'this ' + this.doubleNumber + ' is negative\n'")
+        @Expression("'this ' + this.doubleNumber + ' is negative'")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private String wholeThreePart(String original) {
-            return "v 3 parts\n" + original + "^ 3 parts\n\n";
+            return "v 3 parts\n" + original + "\n^ 3 parts\n";
         }
 
-        @Expression("@(?) + ' is a number\n'")
+        @Expression("@(?) + ' is a number'")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private int addToWildcardNumber(int number) {
             return number + 7;
         }
 
         @Definition(id = "number", field = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;number:I")
-        @Expression("@(this.number) + ' is a number\n'")
+        @Expression("@(this.number) + ' is a number'")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private int tripleNumber(int number) {
             return number * 3;
@@ -46,7 +46,7 @@ public class StringConcatTest {
             return original / 2;
         }
 
-        @Expression("@(?) + ' is negative\n'")
+        @Expression("@(?) + ' is negative'")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private String modifyWildcardPartialResult(String original) {
             return original + " truly";
@@ -59,9 +59,8 @@ public class StringConcatTest {
             return original + " really";
         }
 
-        @Definition(id = "builder", field = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;builder:Ljava/lang/StringBuilder;")
-        @Definition(id = "append", method = "Ljava/lang/StringBuilder;append(Ljava/lang/String;)Ljava/lang/StringBuilder;")
-        @Expression("this.builder.append(? + @(?))")
+        @Definition(id = "print", method = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;print(Ljava/lang/Object;)V")
+        @Expression("this.print(? + @(?))")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private String modifyLastComponent(String original) {
             return original.replace("is ", "is definitely ");

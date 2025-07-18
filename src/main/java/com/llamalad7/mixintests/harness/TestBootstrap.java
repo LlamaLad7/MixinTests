@@ -57,7 +57,7 @@ public class TestBootstrap {
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
-                return box.box();
+                return box.run();
             });
         } catch (IOException e) {
             throw new RuntimeException(e);

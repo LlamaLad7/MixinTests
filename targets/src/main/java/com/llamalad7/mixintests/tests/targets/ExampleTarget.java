@@ -2,9 +2,9 @@ package com.llamalad7.mixintests.tests.targets;
 
 import com.llamalad7.mixintests.harness.tests.TestBox;
 
-public class ExampleTarget implements TestBox {
+public class ExampleTarget extends TestBox {
     @Override
-    public String box() {
-        return "hello".repeat(2);
+    protected void box() {
+        print("hello".repeat(2));
     }
 }
