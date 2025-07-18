@@ -22,19 +22,30 @@ import java.util.stream.Stream;
 
 public class TestBootstrap {
     private static final Set<Path> outputPaths = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static boolean testsFailed = false;
 
     public static Stream<DynamicTest> doTest(String testName, String configName, Class<?> testClass) {
-        Object testInstance;
         try {
-            testInstance = testClass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            Object testInstance;
+            try {
+                testInstance = testClass.getConstructor().newInstance();
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+            return getMixinVersions()
+                    .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
+                    .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
+                        try {
+                            doTest(testName, configName, testInstance, versions);
+                        } catch (Throwable t) {
+                            testsFailed = true;
+                            throw t;
+                        }
+                    }));
+        } catch (Throwable t) {
+            testsFailed = true;
+            throw t;
         }
-        return getMixinVersions()
-                .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
-                .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
-                    doTest(testName, configName, testInstance, versions);
-                }));
     }
 
     public static void beforeTests() {
@@ -42,7 +53,9 @@ public class TestBootstrap {
     }
 
     public static void afterTests() {
-        cleanStaleOutputs();
+        if (!testsFailed) {
+            cleanStaleOutputs();
+        }
     }
 
     private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
