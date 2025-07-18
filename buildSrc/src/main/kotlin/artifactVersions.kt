@@ -13,5 +13,5 @@ val FABRIC_MIXIN_VERSIONS = listOf(
 val MIXINEXTRAS_VERSIONS = listOf(
     "0.3.6",
     "0.4.1",
-    "0.5.0-rc.2",
+    "0.5.0-rc.4",
 )
