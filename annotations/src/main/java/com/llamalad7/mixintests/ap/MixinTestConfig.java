@@ -1,6 +1,7 @@
 package com.llamalad7.mixintests.ap;
 
 import com.google.gson.annotations.SerializedName;
+import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.Element;
@@ -15,14 +16,16 @@ public class MixinTestConfig {
     private final String minVersion = "0.8";
     private final String compatibilityLevel = "JAVA_11";
     private final boolean required = true;
-    private InjectorOptions injectors = new InjectorOptions(1);
+    private final InjectorOptions injectors = new InjectorOptions(1);
+    private final MixinExtrasOptions mixinextras;
     private final List<String> mixins;
     private transient final TypeElement testClass;
 
-    public MixinTestConfig(TypeElement test) {
+    public MixinTestConfig(TypeElement test, MixinTest annotation) {
         this.pkg = PACKAGE;
         this.mixins = getMixinNames(test);
         this.testClass = test;
+        mixinextras = new MixinExtrasOptions(annotation.minMixinExtras());
     }
 
     private static List<String> getMixinNames(TypeElement test) {
@@ -50,5 +53,8 @@ public class MixinTestConfig {
     }
 
     private record InjectorOptions(int defaultRequire) {
+    }
+
+    private record MixinExtrasOptions(String minVersion) {
     }
 }

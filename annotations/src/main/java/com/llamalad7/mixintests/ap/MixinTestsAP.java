@@ -12,14 +12,13 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @AutoService(Processor.class)
 public class MixinTestsAP extends AbstractProcessor {
-    private static final Class<? extends Annotation> ANNOTATION = MixinTest.class;
+    private static final Class<MixinTest> ANNOTATION = MixinTest.class;
     private static final String ANNOTATION_NAME = ANNOTATION.getName();
 
     private final Gson gson = new Gson();
@@ -55,7 +54,7 @@ public class MixinTestsAP extends AbstractProcessor {
 
     private void gatherConfigs(RoundEnvironment roundEnv) {
         for (Element test : roundEnv.getElementsAnnotatedWith(ANNOTATION)) {
-            configs.add(new MixinTestConfig((TypeElement) test));
+            configs.add(new MixinTestConfig((TypeElement) test, test.getAnnotation(ANNOTATION)));
         }
     }
 
