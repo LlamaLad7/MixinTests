@@ -1,0 +1,5 @@
+Inner start: -123 outerString
+Got headInject: innerString
+example
+Got returnInject: 2394
+Outer end: 12345678 injectString
