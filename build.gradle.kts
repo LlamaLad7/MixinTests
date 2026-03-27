@@ -51,8 +51,12 @@ object Props {
 buildConfig {
     useJavaOutput()
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "MixinArtifacts") {
+        val fabricMixinVersions = FABRIC_MIXIN_VERSIONS.toMutableList()
+        if (hasProperty("fabricMixinDir")) {
+            fabricMixinVersions.add(LOCAL_FABRIC_MIXIN_VERSION)
+        }
         buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
-        buildConfigField("FABRIC_MIXIN_JARS", FABRIC_MIXIN_VERSIONS.associateWith(project::fabricMixinJar))
+        buildConfigField("FABRIC_MIXIN_JARS", fabricMixinVersions.associateWith(project::fabricMixinJar))
         buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
     }
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "BuildConstants") {
