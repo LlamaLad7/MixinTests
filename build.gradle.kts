@@ -15,15 +15,17 @@ repositories {
     maven("https://maven.fabricmc.net/")
 }
 
+val testSourceSets = JavaSourceSets(isTest = true)
+
 dependencies {
-    implementation(project("targets"))
-    implementation(testAnnotationProcessor(project("annotations"))!!)
+    testSourceSets.versionedDependencies("implementation", ":targets")
+    implementation(testSourceSets.annotationProcessor(testSourceSets.implementation(project("annotations"))))
     implementation(annotationProcessor("com.google.auto.service:auto-service:1.1.1")!!)
-    compileOnly(testCompileOnly("org.spongepowered:mixin:${MIXIN_VERSIONS.last()}")!!)
-    compileOnly(testCompileOnly("io.github.llamalad7:mixinextras-common:${MIXINEXTRAS_VERSIONS.last()}")!!)
-    implementation("org.ow2.asm:asm-tree:9.7")
-    implementation("org.ow2.asm:asm-commons:9.7")
-    implementation("org.ow2.asm:asm-util:9.7")
+    compileOnly(testSourceSets.compileOnly("net.fabricmc:sponge-mixin:${FABRIC_MIXIN_VERSIONS.last()}"))
+    compileOnly(testSourceSets.compileOnly("io.github.llamalad7:mixinextras-common:${MIXINEXTRAS_VERSIONS.last()}"))
+    implementation("org.ow2.asm:asm-tree:9.9.1")
+    implementation("org.ow2.asm:asm-commons:9.9.1")
+    implementation("org.ow2.asm:asm-util:9.9.1")
     implementation("commons-io:commons-io:2.17.0")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.google.jimfs:jimfs:1.3.0")
@@ -31,18 +33,17 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.24.0")
     implementation("org.apache.logging.log4j:log4j-core:2.24.0")
     implementation("org.apache.logging.log4j:log4j-api:2.24.0")
-    testCompileOnly("net.fabricmc:fabric-loader:0.16.5")
+    testSourceSets.compileOnly("net.fabricmc:fabric-loader:0.16.5")
     implementation(platform("org.junit:junit-bom:5.11.0"))
     implementation("org.junit.jupiter:junit-jupiter")
     implementation("org.junit.platform:junit-platform-launcher:1.11.0")
     implementation("com.github.zafarkhaja:java-semver:0.10.2")
     implementation("org.apache.commons:commons-lang3:3.17.0")
-    implementation("com.roscopeco.jasm:jasm:0.7.0")
     implementation("org.opentest4j:opentest4j:1.3.0")
 }
 
 object Props {
-    const val TEST_OUTPUT_DIR = "test-outputs"
+    const val TEST_OUTPUT_DIR = "testOutputs"
     const val FORCE_GOLDEN_TESTS = "forceGoldenTests"
     const val TESTS_FILTERED = "tests.filtered"
 }
@@ -55,33 +56,32 @@ buildConfig {
         buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
     }
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "BuildConstants") {
-        verbatimPropField(Props::TEST_OUTPUT_DIR)
+        systemPropField(Props::TEST_OUTPUT_DIR)
         systemPropField(Props::FORCE_GOLDEN_TESTS, false)
         systemPropField(Props::TESTS_FILTERED, true)
     }
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-sourceSets {
-    test {
-        java {
-            // Needed for IntelliJ to run the tests with Gradle, for some reason.
-            srcDirs(layout.buildDirectory.dir("generated/sources/annotationProcessor/java/test"))
-        }
+testSourceSets.configureEach {
+    java {
+        // Needed for IntelliJ to run the tests with Gradle, for some reason.
+        srcDirs(layout.buildDirectory.dir("generated/sources/annotationProcessor/java/$name"))
     }
 }
 
 tasks.withType<Test> {
-    inputs.dir(Props.TEST_OUTPUT_DIR)
+    val outputDir = file("test-outputs").resolve(name)
+    inputs.dir(outputDir)
     useJUnitPlatform()
     include("com/llamalad7/mixintests/tests/*")
     systemProperty("mixin.debug.verbose", "true")
     systemProperty("mixin.debug.export", "true")
+    systemProperty(Props.TEST_OUTPUT_DIR, outputDir.absolutePath)
     if (project.hasProperty("force")) {
         systemProperty(Props.FORCE_GOLDEN_TESTS, "true")
     }

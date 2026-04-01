@@ -6,6 +6,7 @@ import org.spongepowered.asm.service.IPropertyKey;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @SuppressWarnings("unchecked")
 @AutoService(IGlobalPropertyService.class)
@@ -37,6 +38,30 @@ public class TestGlobalPropertyService implements IGlobalPropertyService {
         return getProperty(key, defaultValue);
     }
 
-    private record PropertyKey(String name) implements IPropertyKey {
+    private static final class PropertyKey implements IPropertyKey {
+        private final String name;
+
+        private PropertyKey(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            PropertyKey that = (PropertyKey) obj;
+            return Objects.equals(this.name, that.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
+
+        @Override
+        public String toString() {
+            return "PropertyKey[" +
+                    "name=" + name + ']';
+        }
     }
 }

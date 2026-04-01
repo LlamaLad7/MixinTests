@@ -2,17 +2,23 @@ package com.llamalad7.mixintests.harness.util;
 
 import com.github.zafarkhaja.semver.Version;
 import com.llamalad7.mixintests.harness.MixinArtifacts;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-public record MixinVersions(Version mixinVersion, @Nullable Version mixinExtrasVersion, boolean isFabric) {
-    @NotNull
+public final class MixinVersions {
+    public final Version mixinVersion;
+    public final Version mixinExtrasVersion;
+    public final boolean isFabric;
+
+    public MixinVersions(Version mixinVersion, Version mixinExtrasVersion, boolean isFabric) {
+        this.mixinVersion = mixinVersion;
+        this.mixinExtrasVersion = mixinExtrasVersion;
+        this.isFabric = isFabric;
+    }
+
     @Override
     public String toString() {
         return toString(" ", ", ", UnaryOperator.identity());
@@ -21,10 +27,9 @@ public record MixinVersions(Version mixinVersion, @Nullable Version mixinExtrasV
     public List<File> getJars() {
         List<File> jars = new ArrayList<>();
         jars.add(
-                Objects.requireNonNullElse(
-                        MixinArtifacts.MIXIN_JARS.get(mixinVersion.toString()),
+                MixinArtifacts.MIXIN_JARS.containsKey(mixinVersion.toString()) ?
+                        MixinArtifacts.MIXIN_JARS.get(mixinVersion.toString()) :
                         MixinArtifacts.FABRIC_MIXIN_JARS.get(mixinVersion.toString())
-                )
         );
         if (hasMixinExtras()) {
             jars.add(MixinArtifacts.MIXINEXTRAS_JARS.get(mixinExtrasVersion.toString()));
@@ -33,7 +38,7 @@ public record MixinVersions(Version mixinVersion, @Nullable Version mixinExtrasV
     }
 
     public Version upstreamMixinVersion() {
-        if (mixinVersion.buildMetadata().isEmpty()) {
+        if (!mixinVersion.buildMetadata().isPresent()) {
             return mixinVersion;
         }
         return Version.parse(mixinVersion.toString().split("\\+mixin\\.")[1]);

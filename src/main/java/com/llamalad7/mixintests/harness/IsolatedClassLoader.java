@@ -45,16 +45,16 @@ public class IsolatedClassLoader extends URLClassLoader {
     private final Map<String, byte[]> mixinExtrasClassCache;
     private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<>();
 
-    public IsolatedClassLoader(String name, ClassLoader parent, MixinVersions mixinVersions) {
-        super(name, getClasspath(mixinVersions), new DummyClassLoader());
+    public IsolatedClassLoader(ClassLoader parent, MixinVersions mixinVersions) {
+        super(getClasspath(mixinVersions), new DummyClassLoader());
         delegate = parent;
         if (mixinVersions == null) {
             mixinClassCache = null;
             mixinExtrasClassCache = null;
         } else {
-            mixinClassCache = mixinClassCaches.computeIfAbsent(mixinVersions.mixinVersion(), k -> new ConcurrentHashMap<>());
+            mixinClassCache = mixinClassCaches.computeIfAbsent(mixinVersions.mixinVersion, k -> new ConcurrentHashMap<>());
             if (mixinVersions.hasMixinExtras()) {
-                mixinExtrasClassCache = mixinExtrasClassCaches.computeIfAbsent(mixinVersions.mixinExtrasVersion(), k -> new ConcurrentHashMap<>());
+                mixinExtrasClassCache = mixinExtrasClassCaches.computeIfAbsent(mixinVersions.mixinExtrasVersion, k -> new ConcurrentHashMap<>());
             } else {
                 mixinExtrasClassCache = null;
             }
@@ -108,11 +108,11 @@ public class IsolatedClassLoader extends URLClassLoader {
         if (lastDot > 0) {
             String packageName = name.substring(0, lastDot);
 
-            if (getDefinedPackage(packageName) == null) {
+            if (getPackage(packageName) == null) {
                 try {
                     definePackage(packageName, null, null, null, null, null, null, null);
                 } catch (IllegalArgumentException e) { // presumably concurrent package definition
-                    if (getDefinedPackage(packageName) == null) throw e; // still not defined?
+                    if (getPackage(packageName) == null) throw e; // still not defined?
                 }
             }
         }
@@ -177,8 +177,8 @@ public class IsolatedClassLoader extends URLClassLoader {
     public Enumeration<URL> getResources(String name) throws IOException {
         return Iterators.asEnumeration(
                 Iterators.concat(
-                        super.getResources(name).asIterator(),
-                        delegate.getResources(name).asIterator()
+                        Iterators.forEnumeration(super.getResources(name)),
+                        Iterators.forEnumeration(delegate.getResources(name))
                 )
         );
     }
@@ -190,7 +190,7 @@ public class IsolatedClassLoader extends URLClassLoader {
             for (String path : paths) {
                 result.add(new File(path).toURI().toURL());
             }
-            return result.toArray(URL[]::new);
+            return result.toArray(new URL[0]);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

@@ -12,3 +12,10 @@ fun BuildConfigClassSpec.systemPropField(prop: KProperty0<String>, default: Bool
         expression("Boolean.parseBoolean(System.getProperty(\"${prop.get()}\", \"$default\"))")
     )
 }
+
+fun BuildConfigClassSpec.systemPropField(prop: KProperty0<String>) {
+    buildConfigField(
+        String::class.java, prop.name,
+        expression("System.getProperty(\"${prop.get()}\")")
+    )
+}

@@ -9,6 +9,8 @@ repositories {
     mavenCentral()
 }
 
+val javaSourceSets = JavaSourceSets()
+
 dependencies {
-    implementation(project(":annotations"))
+    javaSourceSets.implementation(project(":annotations"))
 }

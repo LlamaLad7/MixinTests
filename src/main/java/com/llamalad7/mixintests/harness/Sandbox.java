@@ -37,7 +37,7 @@ public class Sandbox implements Closeable {
 
     private static URLClassLoader makeTransformingClassLoader(String configName, MixinVersions mixinVersions) {
         try {
-            URLClassLoader bootstrapCl = new IsolatedClassLoader("bootstrap", ClassLoader.getSystemClassLoader(), mixinVersions);
+            URLClassLoader bootstrapCl = new IsolatedClassLoader(ClassLoader.getSystemClassLoader(), mixinVersions);
             Class<?> transformingClClass = bootstrapCl.loadClass("com.llamalad7.mixintests.service.TransformingClassLoader");
             Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, SandboxInfo.class);
             return (URLClassLoader) ctor.newInstance(bootstrapCl, new SandboxInfo(configName, mixinVersions));

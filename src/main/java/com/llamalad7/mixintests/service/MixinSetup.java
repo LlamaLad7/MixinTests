@@ -13,7 +13,7 @@ public class MixinSetup {
 
     public static void init(String configName) {
         MixinBootstrap.init();
-        if (TestUtils.getSandboxInfo().mixinVersions().hasMixinExtras()) {
+        if (TestUtils.getSandboxInfo().mixinVersions.hasMixinExtras()) {
             MixinExtrasBootstrap.init();
         }
         addMixinConfig(configName);
@@ -21,7 +21,7 @@ public class MixinSetup {
     }
 
     private static void addMixinConfig(String configName) {
-        Version version = TestUtils.getSandboxInfo().mixinVersions().upstreamMixinVersion();
+        Version version = TestUtils.getSandboxInfo().mixinVersions.upstreamMixinVersion();
         if (version.isHigherThanOrEquivalentTo(NEW_CONFIG_VERSION)) {
             Mixins.addConfiguration(configName, null);
         } else {

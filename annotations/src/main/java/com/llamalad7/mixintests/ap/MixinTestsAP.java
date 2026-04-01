@@ -13,6 +13,7 @@ import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -27,9 +28,7 @@ public class MixinTestsAP extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of(
-                ANNOTATION_NAME
-        );
+        return Collections.singleton(ANNOTATION_NAME);
     }
 
     @Override

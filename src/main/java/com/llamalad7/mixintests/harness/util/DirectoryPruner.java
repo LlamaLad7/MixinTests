@@ -1,7 +1,5 @@
 package com.llamalad7.mixintests.harness.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -24,9 +22,8 @@ public class DirectoryPruner {
     }
 
     private class PruningFileVisitor extends SimpleFileVisitor<Path> {
-        @NotNull
         @Override
-        public FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             if (!pathsToKeep.contains(normalize(file))) {
                 if (CiUtil.IS_CI) {
                     throw new IllegalStateException("Found unused test output " + file);
@@ -36,9 +33,8 @@ public class DirectoryPruner {
             return FileVisitResult.CONTINUE;
         }
 
-        @NotNull
         @Override
-        public FileVisitResult postVisitDirectory(@NotNull Path dir, IOException exc) throws IOException {
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             if (exc != null) {
                 throw exc;
             }

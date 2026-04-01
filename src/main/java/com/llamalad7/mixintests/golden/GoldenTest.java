@@ -5,23 +5,27 @@ import com.llamalad7.mixintests.harness.TestBootstrap;
 import com.llamalad7.mixintests.harness.TestResult;
 import com.llamalad7.mixintests.harness.util.CiUtil;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
-import com.roscopeco.jasm.JasmDisassembler;
 import org.apache.commons.lang3.StringUtils;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.FileInfo;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GoldenTest {
     private static final String TEST_PACKAGE = "com.llamalad7.mixintests.tests.";
-    private static final Path OUTPUT_DIR = Path.of(BuildConstants.TEST_OUTPUT_DIR);
+    private static final Path OUTPUT_DIR = Paths.get(BuildConstants.TEST_OUTPUT_DIR);
 
     private final TestResult result;
     private final MixinVersions mixinVersions;
@@ -50,10 +54,10 @@ public class GoldenTest {
     }
 
     private void doTest() throws IOException {
-        checkFile(baseOutputDir.resolve("output.txt"), result.output(), false);
+        checkFile(baseOutputDir.resolve("output.txt"), result.output, false);
         if (testBytecode) {
-            for (Map.Entry<String, byte[]> entry : result.transformedClasses().entrySet()) {
-                String fileName = StringUtils.removeStart(entry.getKey(), TEST_PACKAGE).replace('.', '/') + ".jasm";
+            for (Map.Entry<String, byte[]> entry : result.transformedClasses.entrySet()) {
+                String fileName = StringUtils.removeStart(entry.getKey(), TEST_PACKAGE).replace('.', '/') + ".asm";
                 Path output = classOutputDir.resolve(fileName);
                 checkFile(output, disassembleClass(entry.getKey(), entry.getValue()), true);
             }
@@ -61,11 +65,12 @@ public class GoldenTest {
     }
 
     private String disassembleClass(String name, byte[] bytes) {
-        return new JasmDisassembler(
-                StringUtils.substringAfterLast(name, '.'),
-                false,
-                () -> new ByteArrayInputStream(bytes)
-        ).disassemble();
+        StringWriter writer = new StringWriter();
+        try (PrintWriter output = new PrintWriter(writer)) {
+            TraceClassVisitor traceClassVisitor = new TraceClassVisitor(null, new Textifier(), output);
+            new ClassReader(bytes).accept(traceClassVisitor, 0);
+            return writer.toString();
+        }
     }
 
     private Path chooseClassOutputDir() {
@@ -78,15 +83,15 @@ public class GoldenTest {
         Files.createDirectories(file.getParent());
         if (!Files.exists(file)) {
             if (!CiUtil.IS_CI) {
-                Files.writeString(file, actual);
+                Files.write(file, actual.getBytes(StandardCharsets.UTF_8));
             }
-            errors.add(new AssertionFailedError("Expected file %s did not exist!".formatted(file)));
+            errors.add(new AssertionFailedError(String.format("Expected file %s did not exist!", file)));
             return;
         }
-        String expected = GoldenUtils.normalize(Files.readString(file));
+        String expected = GoldenUtils.normalize(new String(Files.readAllBytes(file), StandardCharsets.UTF_8));
         if (!actual.equals(expected)) {
             if (BuildConstants.FORCE_GOLDEN_TESTS && canForce) {
-                Files.writeString(file, actual);
+                Files.write(file, actual.getBytes(StandardCharsets.UTF_8));
                 return;
             }
             errors.add(

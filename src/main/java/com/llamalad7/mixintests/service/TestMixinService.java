@@ -36,8 +36,8 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
 
     @Override
     public void offer(IMixinInternal internal) {
-        if (internal instanceof IMixinTransformerFactory factory) {
-            transformer = factory.createTransformer();
+        if (internal instanceof IMixinTransformerFactory) {
+            transformer = ((IMixinTransformerFactory) internal).createTransformer();
         }
     }
 

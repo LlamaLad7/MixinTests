@@ -31,9 +31,10 @@ public class MixinTestConfig {
     private static List<String> getMixinNames(TypeElement test) {
         List<String> result = new ArrayList<>();
         for (Element inner : test.getEnclosedElements()) {
-            if (!(inner instanceof TypeElement mixin)) {
+            if (!(inner instanceof TypeElement)) {
                 continue;
             }
+            TypeElement mixin = (TypeElement) inner;
             String outer = StringUtils.removeStart(test.getQualifiedName().toString(), PACKAGE + '.');
             result.add(outer + "$" + mixin.getSimpleName());
         }
@@ -45,16 +46,26 @@ public class MixinTestConfig {
     }
 
     public String getFileName() {
-        return testClass.getQualifiedName().toString() + ".mixins.json";
+        return testClass.getQualifiedName() + ".mixins.json";
     }
 
     public TypeElement getTestClass() {
         return testClass;
     }
 
-    private record InjectorOptions(int defaultRequire) {
+    private static final class InjectorOptions {
+        public final int defaultRequire;
+
+        public InjectorOptions(int defaultRequire) {
+            this.defaultRequire = defaultRequire;
+        }
     }
 
-    private record MixinExtrasOptions(String minVersion) {
+    private static final class MixinExtrasOptions {
+        public final String minVersion;
+
+        public MixinExtrasOptions(String minVersion) {
+            this.minVersion = minVersion;
+        }
     }
 }

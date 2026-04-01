@@ -1,18 +1,25 @@
 package com.llamalad7.mixintests.ap;
 
 import com.llamalad7.mixintests.ap.annotations.TestLocation;
-import com.palantir.javapoet.*;
+import com.squareup.javapoet.*;
 import org.junit.jupiter.api.*;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record MixinTestGenerator(List<MixinTestConfig> configs) {
+public class MixinTestGenerator {
     private static final String TESTS_PACKAGE = "com.llamalad7.mixintests.tests";
     private static final ClassName TEST_BOOTSTRAP = ClassName.get("com.llamalad7.mixintests.harness", "TestBootstrap");
+
+    private final List<MixinTestConfig> configs;
+
+    public MixinTestGenerator(List<MixinTestConfig> configs) {
+        this.configs = configs;
+    }
 
     public void generate(Filer filer) {
         JavaFile javaFile = generateFile();
@@ -37,7 +44,7 @@ public record MixinTestGenerator(List<MixinTestConfig> configs) {
     }
 
     private List<MethodSpec> generateMethods() {
-        return configs.stream().map(this::generateTest).toList();
+        return configs.stream().map(this::generateTest).collect(Collectors.toList());
     }
 
     private MethodSpec generateTest(MixinTestConfig config) {

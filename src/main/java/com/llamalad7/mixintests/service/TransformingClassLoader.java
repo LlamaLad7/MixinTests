@@ -27,13 +27,13 @@ public class TransformingClassLoader extends IsolatedClassLoader implements Tran
     private final Map<String, byte[]> postMixinClasses = new ConcurrentHashMap<>();
 
     public TransformingClassLoader(ClassLoader parent, SandboxInfo sandboxInfo) {
-        super("transforming", parent, null);
+        super(parent, null);
         if (INSTANCE != null) {
             throw new IllegalStateException("TransformingClassLoader already initialized");
         }
         INSTANCE = this;
         this.sandboxInfo = sandboxInfo;
-        MixinSetup.init(sandboxInfo.mixinConfig());
+        MixinSetup.init(sandboxInfo.mixinConfig);
         loadDummyTarget();
     }
 
