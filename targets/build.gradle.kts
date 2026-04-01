@@ -13,4 +13,5 @@ val javaSourceSets = JavaSourceSets()
 
 dependencies {
     javaSourceSets.implementation(project(":annotations"))
+    javaSourceSets.implementation("org.junit.jupiter:junit-jupiter:5.11.0")
 }
