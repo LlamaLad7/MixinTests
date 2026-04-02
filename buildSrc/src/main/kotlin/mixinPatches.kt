@@ -37,3 +37,21 @@ fun changeExportDir(node: ClassNode) {
         }
     }
 }
+
+val serviceStubs = mapOf(
+    stubInterface("org/spongepowered/asm/service/IAdviceProvider"),
+    stubInterface("org/spongepowered/asm/service/IFeatureValidator"),
+)
+
+private fun stubInterface(name: String): Pair<String, () -> ClassNode> = name to {
+    val node = ClassNode()
+    node.visit(
+        Opcodes.V1_8,
+        Opcodes.ACC_PUBLIC or Opcodes.ACC_ABSTRACT or Opcodes.ACC_INTERFACE,
+        name,
+        null,
+        "java/lang/Object",
+        null
+    )
+    node
+}

@@ -72,6 +72,16 @@ public class TestMixinService extends MixinServiceAbstract implements IClassByte
     }
 
     @Override
+    public IAdviceProvider getAdviceProvider() {
+        return IAdviceProvider.GENERIC;
+    }
+
+    @Override
+    public IFeatureValidator getFeatureValidator() {
+        return IFeatureValidator.ALLOW_ALL;
+    }
+
+    @Override
     public Collection<String> getPlatformAgents() {
         return List.of();
     }

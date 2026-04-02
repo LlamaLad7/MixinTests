@@ -7,9 +7,10 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
-fun transformJar(inputJar: File, outputJar: File, transformer: (ClassNode) -> Unit) {
+fun transformJar(inputJar: File, outputJar: File, stubs: Map<String, () -> ClassNode>, transformer: (ClassNode) -> Unit) {
     JarFile(inputJar).use { input ->
         JarOutputStream(FileOutputStream(outputJar)).use { output ->
+            val remainingStubs = stubs.toMutableMap()
             for (entry in input.entries()) {
                 if (entry.isSignature()) {
                     continue
@@ -21,6 +22,8 @@ fun transformJar(inputJar: File, outputJar: File, transformer: (ClassNode) -> Un
                     val entryBytes = entryInputStream.readBytes()
                     val node = ClassNode()
                     ClassReader(entryBytes).accept(node, 0)
+                    // No need for a stub if the class is already present
+                    remainingStubs.remove(node.name)
                     transformer(node)
                     val writer = ClassWriter(ClassWriter.COMPUTE_MAXS)
                     node.accept(writer)
@@ -29,6 +32,14 @@ fun transformJar(inputJar: File, outputJar: File, transformer: (ClassNode) -> Un
                     entryInputStream.copyTo(output)
                 }
 
+                output.closeEntry()
+            }
+
+            for ((name, stub) in remainingStubs) {
+                output.putNextEntry(ZipEntry("$name.class"))
+                val writer = ClassWriter(ClassWriter.COMPUTE_MAXS)
+                stub().accept(writer)
+                output.write(writer.toByteArray())
                 output.closeEntry()
             }
         }
