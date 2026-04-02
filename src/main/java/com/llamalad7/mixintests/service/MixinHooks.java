@@ -15,6 +15,6 @@ public class MixinHooks {
 
     public static String getMixinOutputDir() {
         SandboxInfo info = TestUtils.getSandboxInfo();
-        return ".mixin.out/" + info.mixinConfig + '/' + info.mixinVersions.getSlug();
+        return ".mixin.out/" + info.testName + '/' + info.mixinVersions.getSlug();
     }
 }

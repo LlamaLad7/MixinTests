@@ -7,6 +7,7 @@ import org.junit.jupiter.api.*;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -14,11 +15,12 @@ import java.util.stream.Stream;
 public class MixinTestGenerator {
     private static final String TESTS_PACKAGE = "com.llamalad7.mixintests.tests";
     private static final ClassName TEST_BOOTSTRAP = ClassName.get("com.llamalad7.mixintests.harness", "TestBootstrap");
+    private static final ClassName TEST_CONFIG = ClassName.get("com.llamalad7.mixintests.harness", "MixinConfig");
 
-    private final List<MixinTestConfig> configs;
+    private final List<MixinTestInfo> tests;
 
-    public MixinTestGenerator(List<MixinTestConfig> configs) {
-        this.configs = configs;
+    public MixinTestGenerator(List<MixinTestInfo> tests) {
+        this.tests = tests;
     }
 
     public void generate(Filer filer) {
@@ -44,12 +46,12 @@ public class MixinTestGenerator {
     }
 
     private List<MethodSpec> generateMethods() {
-        return configs.stream().map(this::generateTest).collect(Collectors.toList());
+        return tests.stream().map(this::generateTest).collect(Collectors.toList());
     }
 
-    private MethodSpec generateTest(MixinTestConfig config) {
-        ClassName testName = ClassName.get(config.getTestClass());
-        return MethodSpec.methodBuilder(testMethodName(config.getTestName()))
+    private MethodSpec generateTest(MixinTestInfo test) {
+        ClassName testName = ClassName.get(test.getTestClass());
+        MethodSpec.Builder builder = MethodSpec.methodBuilder(testMethodName(test.getTestName()))
                 .returns(ParameterizedTypeName.get(Stream.class, DynamicTest.class))
                 .addModifiers(Modifier.PUBLIC)
                 .addAnnotation(TestFactory.class)
@@ -60,17 +62,25 @@ public class MixinTestGenerator {
                 )
                 .addAnnotation(
                         AnnotationSpec.builder(DisplayName.class)
-                                .addMember("value", "$S", config.getTestName())
+                                .addMember("value", "$S", test.getTestName())
                                 .build()
                 )
                 .addCode(
-                        "return $T.doTest($S, $S, $T.class);",
+                        "return $T.doTest($S, $T.class, $T.asList(",
                         TEST_BOOTSTRAP,
-                        config.getTestName(),
-                        config.getFileName(),
-                        testName
-                )
-                .build();
+                        test.getTestName(),
+                        testName,
+                        Arrays.class
+                );
+        List<MixinTestConfig> configs = test.configs;
+        for (int i = 0; i < configs.size(); i++) {
+            if (i != 0) {
+                builder.addCode(", ");
+            }
+            MixinTestConfig config = configs.get(i);
+            builder.addCode("new $T($S, $L)", TEST_CONFIG, config.getFileName(), config.getFabricCompat());
+        }
+        return builder.addCode("));").build();
     }
 
     private String testMethodName(String testName) {

@@ -23,7 +23,7 @@ public class MixinTestsAP extends AbstractProcessor {
     private static final String ANNOTATION_NAME = ANNOTATION.getName();
 
     private final Gson gson = new Gson();
-    private final List<MixinTestConfig> configs = new ArrayList<>();
+    private final List<MixinTestInfo> tests = new ArrayList<>();
     private Filer filer;
 
     @Override
@@ -53,33 +53,35 @@ public class MixinTestsAP extends AbstractProcessor {
 
     private void gatherConfigs(RoundEnvironment roundEnv) {
         for (Element test : roundEnv.getElementsAnnotatedWith(ANNOTATION)) {
-            configs.add(new MixinTestConfig((TypeElement) test, test.getAnnotation(ANNOTATION)));
+            tests.add(new MixinTestInfo((TypeElement) test, test.getAnnotation(ANNOTATION)));
         }
     }
 
     private void writeOutputs() {
-        if (configs.isEmpty()) {
+        if (tests.isEmpty()) {
             return;
         }
         writeConfigJsons();
         writeTestClass();
-        configs.clear();
+        tests.clear();
     }
 
     private void writeConfigJsons() {
-        for (MixinTestConfig config : configs) {
-            try {
-                FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT, "", config.getFileName());
-                try (Writer writer = resource.openWriter()) {
-                    gson.toJson(config, writer);
+        for (MixinTestInfo test : tests) {
+            for (MixinTestConfig config : test.configs) {
+                try {
+                    FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT, "", config.getFileName());
+                    try (Writer writer = resource.openWriter()) {
+                        gson.toJson(config, writer);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to write mixin config: ", e);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to write mixin config: ", e);
             }
         }
     }
 
     private void writeTestClass() {
-        new MixinTestGenerator(configs).generate(filer);
+        new MixinTestGenerator(tests).generate(filer);
     }
 }

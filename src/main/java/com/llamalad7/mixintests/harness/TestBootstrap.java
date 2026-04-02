@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -24,7 +25,7 @@ public class TestBootstrap {
     private static final Set<Path> outputPaths = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private static boolean testsFailed = false;
 
-    public static Stream<DynamicTest> doTest(String testName, String configName, Class<?> testClass) {
+    public static Stream<DynamicTest> doTest(String testName, Class<?> testClass, List<MixinConfig> configs) {
         try {
             Object testInstance;
             try {
@@ -36,7 +37,7 @@ public class TestBootstrap {
                     .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
                     .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
                         try {
-                            doTest(testName, configName, testInstance, versions);
+                            doTest(testName, configs, testInstance, versions);
                         } catch (Throwable t) {
                             testsFailed = true;
                             throw t;
@@ -58,11 +59,11 @@ public class TestBootstrap {
         }
     }
 
-    private static void doTest(String testName, String configName, Object testInstance, MixinVersions mixinVersions) {
+    private static void doTest(String testName, List<MixinConfig> configs, Object testInstance, MixinVersions mixinVersions) {
         MixinTest testAnn = testInstance.getClass().getAnnotation(MixinTest.class);
         Class<? extends TestBox> boxClass = testAnn.box();
         TestResult result;
-        try (Sandbox sandbox = new Sandbox(configName, mixinVersions)) {
+        try (Sandbox sandbox = new Sandbox(testName, configs, mixinVersions)) {
             result = sandbox.doTest(() -> {
                 TestBox box;
                 try {
