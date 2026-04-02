@@ -1,0 +1,2 @@
+Static: modified
+Non-static: modified
