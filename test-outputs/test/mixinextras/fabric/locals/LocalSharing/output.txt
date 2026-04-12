@@ -1,0 +1,2 @@
+Number: 27
+String: example (modified by old) (modified by new)
