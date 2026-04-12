@@ -1,0 +1,10 @@
+Non Final
+A: 100
+B: 1
+C: 2
+D: 3
+Final
+A: A
+B: B
+C: C
+D: D overridden
