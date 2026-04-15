@@ -44,6 +44,8 @@ class JavaSourceSets internal constructor(
                             languageVersion.set(JavaLanguageVersion.of(version))
                         }
                     )
+                    sourceCompatibility = version.toString()
+                    targetCompatibility = version.toString()
                 }
             }
 
