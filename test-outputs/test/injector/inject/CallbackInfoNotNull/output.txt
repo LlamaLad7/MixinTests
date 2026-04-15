@@ -1,0 +1,11 @@
+11
+doThing:nonStaticIntoNonStatic
+doThing:staticIntoNonStatic
+doThing:nonStaticIntoNonStaticNoParam
+doThing:staticIntoNonStaticNoParam
+doThing:nonStaticIntoNonStaticWithLocals
+doThing:staticIntoNonStaticWithLocals
+10
+staticDoThing:staticIntoStatic
+staticDoThing:staticIntoStaticNoParam
+staticDoThing:staticIntoStaticWithLocals
