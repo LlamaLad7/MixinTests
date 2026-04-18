@@ -1,0 +1,3 @@
+original <clinit>
+hacky <clinit>
+Values: [A, B, C, NEW_ENTRY]
