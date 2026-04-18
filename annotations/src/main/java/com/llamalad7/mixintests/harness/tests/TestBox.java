@@ -1,17 +1,22 @@
 package com.llamalad7.mixintests.harness.tests;
 
 public abstract class TestBox {
-    private final StringBuilder builder = new StringBuilder();
+    private static final ThreadLocal<StringBuilder> builder = ThreadLocal.withInitial(StringBuilder::new);
 
     protected abstract void box();
 
-    protected final void print(Object o) {
-        builder.append(o).append('\n');
+    public static void print(Object o) {
+        builder.get().append(o).append('\n');
     }
 
     public final String run() {
-        builder.setLength(0);
-        box();
-        return builder.toString();
+        StringBuilder original = builder.get();
+        builder.remove();
+        try {
+            box();
+            return builder.get().toString();
+        } finally {
+            builder.set(original);
+        }
     }
 }

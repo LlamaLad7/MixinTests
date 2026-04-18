@@ -36,9 +36,8 @@ com/llamalad7/mixintests/tests/mixins/fabric/injector/inject/NullPassedForUnused
   protected box()V
    L0
     LINENUMBER 8 L0
-    ALOAD 0
     LDC "example"
-    INVOKEVIRTUAL com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.print (Ljava/lang/Object;)V
+    INVOKESTATIC com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.print (Ljava/lang/Object;)V
    L1
     LINENUMBER 9 L1
     ALOAD 0
@@ -55,15 +54,14 @@ com/llamalad7/mixintests/tests/mixins/fabric/injector/inject/NullPassedForUnused
   @Lorg/spongepowered/asm/mixin/transformer/meta/MixinMerged;(mixin="com.llamalad7.mixintests.tests.mixins.fabric.injector.inject.NullPassedForUnusedCallbackInfo$TheMixin", priority=1000, sessionId="bb20b45f-d4d9-5138-3d93-cb799b3970be")
    L0
     LINENUMBER 518 L0
-    ALOAD 0
     LDC "modified"
-    INVOKEVIRTUAL com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.print (Ljava/lang/Object;)V
+    INVOKESTATIC com/llamalad7/mixintests/tests/targets/ExampleVoidTarget.print (Ljava/lang/Object;)V
    L1
     LINENUMBER 519 L1
     RETURN
    L2
     LOCALVARIABLE this Lcom/llamalad7/mixintests/tests/targets/ExampleVoidTarget; L0 L2 0
     LOCALVARIABLE ci Lorg/spongepowered/asm/mixin/injection/callback/CallbackInfo; L0 L2 1
-    MAXSTACK = 2
+    MAXSTACK = 1
     MAXLOCALS = 2
 }

@@ -60,7 +60,7 @@ public class StringConcatTest {
         }
 
         @Definition(id = "print", method = "Lcom/llamalad7/mixintests/tests/targets/StringConcatTarget;print(Ljava/lang/Object;)V")
-        @Expression("this.print(? + @(?))")
+        @Expression("print(? + @(?))")
         @ModifyExpressionValue(method = "box", at = @At("MIXINEXTRAS:EXPRESSION"))
         private String modifyLastComponent(String original) {
             return original.replace("is ", "is definitely ");
