@@ -1,0 +1,4 @@
+original <clinit>
+hacky extension <clinit>
+normal extension <clinit>
+Values: [A, B, C, NEW_ENTRY_2, NEW_ENTRY]
