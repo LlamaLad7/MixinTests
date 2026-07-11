@@ -1,3 +1,4 @@
-test: original
-TEST: original
-x: original
+test: test
+TEST: TEST
+x: x
+x: x

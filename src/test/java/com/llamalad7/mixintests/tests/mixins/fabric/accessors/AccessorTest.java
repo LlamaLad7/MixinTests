@@ -2,30 +2,50 @@ package com.llamalad7.mixintests.tests.mixins.fabric.accessors;
 
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.ap.annotations.TestOption;
+import com.llamalad7.mixintests.harness.tests.TestBox;
 import com.llamalad7.mixintests.tests.targets.AccessorTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @MixinTest(box = AccessorTarget.class, fabricMixin = TestOption.ON)
 public class AccessorTest {
     @Mixin(AccessorTarget.class)
-    interface Mixin0 {
+    static abstract class Mixin0 extends TestBox {
         @Accessor
-        String getTest();
+        abstract String getTest();
 
         @Accessor
-        String getTEST();
+        abstract String getTEST();
+
+        @Inject(method = "box", at = @At("HEAD"))
+        private void box(CallbackInfo ci) {
+            print("test: " + getTest());
+            print("TEST: " + getTEST());
+        }
     }
 
     @Mixin(AccessorTarget.class)
-    interface Mixin1 {
+    static abstract class Mixin1 extends TestBox {
         @Accessor("x")
-        String getX();
+        abstract String getX();
+
+        @Inject(method = "box", at = @At("HEAD"))
+        private void box(CallbackInfo ci) {
+            print("x: " + getX());
+        }
     }
 
     @Mixin(AccessorTarget.class)
-    interface Mixin2 {
+    static abstract class Mixin2 extends TestBox {
         @Accessor
-        String getX();
+        abstract String getX();
+
+        @Inject(method = "box", at = @At("HEAD"))
+        private void box(CallbackInfo ci) {
+            print("x: " + getX());
+        }
     }
 }
