@@ -1,0 +1,2 @@
+preApply: com/llamalad7/mixintests/tests/targets/EmptyTarget
+postApply: com/llamalad7/mixintests/tests/targets/EmptyTarget
