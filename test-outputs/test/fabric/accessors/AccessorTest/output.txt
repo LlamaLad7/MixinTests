@@ -1,4 +1,0 @@
-test: test
-TEST: TEST
-x: x
-x: x

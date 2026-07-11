@@ -11,22 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @MixinTest(box = AccessorTarget.class, minFabricMixin = "0.17.4", fabricMixin = TestOption.ON)
-public class AccessorTest {
-    @Mixin(AccessorTarget.class)
-    static abstract class Mixin0 extends TestBox {
-        @Accessor
-        abstract String getTest();
-
-        @Accessor
-        abstract String getTEST();
-
-        @Inject(method = "box", at = @At("HEAD"))
-        private void box(CallbackInfo ci) {
-            print("test: " + getTest());
-            print("TEST: " + getTEST());
-        }
-    }
-
+public class AccessorSingleLetterTest {
     @Mixin(AccessorTarget.class)
     static abstract class Mixin1 extends TestBox {
         @Accessor("x")
