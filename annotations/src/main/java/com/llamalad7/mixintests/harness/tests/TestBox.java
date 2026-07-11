@@ -1,5 +1,7 @@
 package com.llamalad7.mixintests.harness.tests;
 
+import java.util.function.Supplier;
+
 public abstract class TestBox {
     private static final ThreadLocal<StringBuilder> builder = ThreadLocal.withInitial(StringBuilder::new);
 
@@ -9,11 +11,11 @@ public abstract class TestBox {
         builder.get().append(o).append('\n');
     }
 
-    public final String run() {
+    public static String run(Supplier<TestBox> box) {
         StringBuilder original = builder.get();
         builder.remove();
         try {
-            box();
+            box.get().box();
             return builder.get().toString();
         } finally {
             builder.set(original);

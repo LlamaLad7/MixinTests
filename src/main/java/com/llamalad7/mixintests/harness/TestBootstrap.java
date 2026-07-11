@@ -64,15 +64,13 @@ public class TestBootstrap {
         Class<? extends TestBox> boxClass = testAnn.box();
         TestResult result;
         try (Sandbox sandbox = new Sandbox(testName, configs, mixinVersions)) {
-            result = sandbox.doTest(() -> {
-                TestBox box;
+            result = sandbox.doTest(() -> TestBox.run(() -> {
                 try {
-                    box = (TestBox) sandbox.loadClass(boxClass.getName()).getConstructor().newInstance();
+                    return (TestBox) sandbox.loadClass(boxClass.getName()).getConstructor().newInstance();
                 } catch (ReflectiveOperationException e) {
                     throw new RuntimeException(e);
                 }
-                return box.run();
-            });
+            }));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
