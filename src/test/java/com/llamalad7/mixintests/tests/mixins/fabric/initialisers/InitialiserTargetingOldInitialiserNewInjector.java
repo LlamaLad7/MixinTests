@@ -1,6 +1,6 @@
 package com.llamalad7.mixintests.tests.mixins.fabric.initialisers;
 
-import com.llamalad7.mixintests.ap.annotations.FabricCompat;
+import com.llamalad7.mixintests.ap.annotations.Config;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.ap.annotations.TestOption;
 import com.llamalad7.mixintests.tests.targets.InitialiserTarget;
@@ -20,7 +20,7 @@ public class InitialiserTargetingOldInitialiserNewInjector {
         }
     }
 
-    @FabricCompat(FabricUtil.COMPATIBILITY_0_17_0)
+    @Config(fabricCompat = FabricUtil.COMPATIBILITY_0_17_0)
     @Mixin(InitialiserTarget.class)
     static class InitialiserMixin {
         @Shadow private static String STATIC_FIELD = "merged";

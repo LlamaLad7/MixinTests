@@ -42,7 +42,6 @@ public class MixinSetup {
 
     private static void decorateWithFabricCompat(List<MixinConfig> configs) {
         Map<String, Integer> compatMap = configs.stream()
-                .filter(it -> it.fabricCompat != null)
                 .collect(Collectors.toMap(it -> it.json, it -> it.fabricCompat));
         for (Config config : Mixins.getConfigs()) {
             if (compatMap.containsKey(config.getName())) {

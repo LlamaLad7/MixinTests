@@ -7,6 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface FabricCompat {
-    int value();
+public @interface Config {
+    String id() default "";
+
+    int fabricCompat() default Integer.MAX_VALUE;
+
+    Class<?> plugin() default void.class;
 }

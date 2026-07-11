@@ -16,22 +16,32 @@ public class MixinTestConfig {
     private final InjectorOptions injectors = new InjectorOptions(1);
     private final MixinExtrasOptions mixinextras;
     private final List<String> mixins;
+    private final String plugin;
+    private transient final String id;
     private transient final TypeElement testClass;
-    private transient final Integer fabricCompat;
+    private transient final int fabricCompat;
 
-    public MixinTestConfig(TypeElement test, MixinTest annotation, List<String> mixinNames, Integer fabricCompat) {
+    public MixinTestConfig(TypeElement test, MixinTest annotation, List<String> mixinNames, ConfigProperties configProperties) {
         this.pkg = MixinTestConstants.PACKAGE;
         this.mixins = mixinNames;
         this.testClass = test;
-        this.fabricCompat = fabricCompat;
-        mixinextras = new MixinExtrasOptions(annotation.minMixinExtras());
+        this.id = configProperties.id;
+        this.fabricCompat = configProperties.fabricCompat;
+        this.plugin = configProperties.plugin;
+        this.mixinextras = new MixinExtrasOptions(annotation.minMixinExtras());
     }
 
     public String getFileName() {
-        return testClass.getQualifiedName() + "-" + fabricCompat + ".mixins.json";
+        return String.join(
+                "-",
+                testClass.getQualifiedName(),
+                id,
+                String.valueOf(fabricCompat),
+                plugin
+        ) + ".mixins.json";
     }
 
-    public Integer getFabricCompat() {
+    public int getFabricCompat() {
         return fabricCompat;
     }
 

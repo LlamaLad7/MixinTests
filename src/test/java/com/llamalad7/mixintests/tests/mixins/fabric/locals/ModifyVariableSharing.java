@@ -1,6 +1,6 @@
 package com.llamalad7.mixintests.tests.mixins.fabric.locals;
 
-import com.llamalad7.mixintests.ap.annotations.FabricCompat;
+import com.llamalad7.mixintests.ap.annotations.Config;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.ap.annotations.TestOption;
 import com.llamalad7.mixintests.tests.targets.ParameterTarget;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @MixinTest(box = ParameterTarget.class, fabricMixin = TestOption.ON, minFabricMixin = "0.17.2")
 public class ModifyVariableSharing {
-    @FabricCompat(FabricUtil.COMPATIBILITY_0_16_5)
+    @Config(fabricCompat = FabricUtil.COMPATIBILITY_0_16_5)
     @Mixin(value = ParameterTarget.class, priority = 500)
     static class OldMixin {
         @ModifyVariable(method = "doThing", at = @At("HEAD"), argsOnly = true, name = "arg2")

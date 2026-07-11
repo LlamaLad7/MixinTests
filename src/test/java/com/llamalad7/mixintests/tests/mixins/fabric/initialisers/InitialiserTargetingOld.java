@@ -1,6 +1,6 @@
 package com.llamalad7.mixintests.tests.mixins.fabric.initialisers;
 
-import com.llamalad7.mixintests.ap.annotations.FabricCompat;
+import com.llamalad7.mixintests.ap.annotations.Config;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.ap.annotations.TestOption;
 import com.llamalad7.mixintests.tests.targets.InitialiserTarget;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @MixinTest(box = InitialiserTarget.class, fabricMixin = TestOption.ON)
 public class InitialiserTargetingOld {
-    @FabricCompat(FabricUtil.COMPATIBILITY_0_17_0)
+    @Config(fabricCompat = FabricUtil.COMPATIBILITY_0_17_0)
     @Mixin(value = InitialiserTarget.class, priority = 1500)
     static class TargetingMixin {
         @ModifyConstant(method = {"<init>", "<clinit>"}, constant = @Constant(stringValue = "merged"), require = 0)
@@ -21,7 +21,7 @@ public class InitialiserTargetingOld {
         }
     }
 
-    @FabricCompat(FabricUtil.COMPATIBILITY_0_17_0)
+    @Config(fabricCompat = FabricUtil.COMPATIBILITY_0_17_0)
     @Mixin(InitialiserTarget.class)
     static class InitialiserMixin {
         @Shadow private static String STATIC_FIELD = "merged";

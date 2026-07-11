@@ -24,6 +24,7 @@ public class MixinTestsAP extends AbstractProcessor {
 
     private final Gson gson = new Gson();
     private final List<MixinTestInfo> tests = new ArrayList<>();
+    private ProcessingEnvironment processingEnv;
     private Filer filer;
 
     @Override
@@ -38,7 +39,8 @@ public class MixinTestsAP extends AbstractProcessor {
 
     @Override
     public void init(ProcessingEnvironment processingEnv) {
-        filer = processingEnv.getFiler();
+        this.processingEnv = processingEnv;
+        this.filer = processingEnv.getFiler();
     }
 
     @Override
@@ -53,7 +55,7 @@ public class MixinTestsAP extends AbstractProcessor {
 
     private void gatherConfigs(RoundEnvironment roundEnv) {
         for (Element test : roundEnv.getElementsAnnotatedWith(ANNOTATION)) {
-            tests.add(new MixinTestInfo((TypeElement) test, test.getAnnotation(ANNOTATION)));
+            tests.add(new MixinTestInfo(this.processingEnv, (TypeElement) test, test.getAnnotation(ANNOTATION)));
         }
     }
 
