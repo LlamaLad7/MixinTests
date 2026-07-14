@@ -66,7 +66,7 @@ public class TestBootstrap {
         MixinTest testAnn = testInstance.getClass().getAnnotation(MixinTest.class);
         Class<? extends TestBox> boxClass = testAnn.box();
         TestResult result;
-        try (Sandbox sandbox = new Sandbox(testName, configs, mixinVersions)) {
+        try (Sandbox sandbox = new Sandbox(testName, configs, mixinVersions, testAnn.mixinOptions())) {
             result = sandbox.doTest(() -> TestBox.run(() -> {
                 try {
                     return (TestBox) sandbox.loadClass(boxClass.getName()).getConstructor().newInstance();
