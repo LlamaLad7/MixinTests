@@ -14,15 +14,12 @@ import org.junit.jupiter.api.DynamicTest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class TestBootstrap {
-    private static final Set<Path> outputPaths = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static final Set<Path> outputPathsToKeep = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private static boolean testsFailed = false;
 
     public static Stream<DynamicTest> doTest(String testName, Class<?> testClass, List<MixinConfig> configs) {
@@ -33,8 +30,14 @@ public class TestBootstrap {
             } catch (ReflectiveOperationException e) {
                 throw new RuntimeException(e);
             }
-            return getMixinVersions()
-                    .filter(versions -> TestFilterer.shouldRun(versions, testInstance))
+            Set<MixinVersions> applicableVersions = getMixinVersions();
+            applicableVersions.removeIf(versions -> !TestFilterer.shouldRun(versions, testInstance));
+            if (applicableVersions.isEmpty()) {
+                // The test will likely become active in the future.
+                touchedOutput(GoldenTest.testPath(testName));
+                return Stream.empty();
+            }
+            return applicableVersions.stream()
                     .map(versions -> DynamicTest.dynamicTest(versions.toString(), () -> {
                         try {
                             doTest(testName, configs, testInstance, versions);
@@ -77,8 +80,8 @@ public class TestBootstrap {
         new GoldenTest(testName, result, mixinVersions, testAnn.testBytecode()).test();
     }
 
-    private static Stream<MixinVersions> getMixinVersions() {
-        Set<MixinVersions> result = new HashSet<>();
+    private static Set<MixinVersions> getMixinVersions() {
+        Set<MixinVersions> result = new LinkedHashSet<>();
         for (Version mixinVersion : MixinVersionInfo.MIXIN_VERSIONS) {
             result.add(new MixinVersions(mixinVersion, MixinVersionInfo.MIXINEXTRAS_VERSIONS.last(), false));
         }
@@ -91,7 +94,7 @@ public class TestBootstrap {
         }
         result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), null, false));
         result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), null, true));
-        return result.stream();
+        return result;
     }
 
     private static void cleanMixinOut() {
@@ -103,7 +106,7 @@ public class TestBootstrap {
     }
 
     public static void touchedOutput(Path path) {
-        outputPaths.add(path);
+        outputPathsToKeep.add(path);
     }
 
     private static void cleanStaleOutputs() {
@@ -111,7 +114,7 @@ public class TestBootstrap {
             return;
         }
         try {
-            new DirectoryPruner(outputPaths).prune(Path.of(BuildConstants.TEST_OUTPUT_DIR));
+            new DirectoryPruner(outputPathsToKeep).prune(Path.of(BuildConstants.TEST_OUTPUT_DIR));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -23,6 +23,14 @@ public class DirectoryPruner {
 
     private class PruningFileVisitor extends SimpleFileVisitor<Path> {
         @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+            if (pathsToKeep.contains(normalize(dir))) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             if (!pathsToKeep.contains(normalize(file))) {
                 if (CiUtil.IS_CI) {

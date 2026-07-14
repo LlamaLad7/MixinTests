@@ -37,7 +37,7 @@ public class GoldenTest {
     public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions, boolean testBytecode) {
         this.result = result;
         this.mixinVersions = mixinVersions;
-        this.baseOutputDir = OUTPUT_DIR.resolve(testName.replace('.', '/'));
+        this.baseOutputDir = testPath(testName);
         this.testBytecode = testBytecode;
         this.classOutputDir = chooseClassOutputDir();
     }
@@ -51,6 +51,10 @@ public class GoldenTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Path testPath(String testName) {
+        return OUTPUT_DIR.resolve(testName.replace('.', '/'));
     }
 
     private void doTest() throws IOException {
