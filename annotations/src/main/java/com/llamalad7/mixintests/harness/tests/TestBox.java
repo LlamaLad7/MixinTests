@@ -11,14 +11,30 @@ public abstract class TestBox {
         builder.get().append(o).append('\n');
     }
 
-    public static String run(Supplier<TestBox> box) {
+    public static Result run(Supplier<TestBox> box) {
         StringBuilder original = builder.get();
         builder.remove();
         try {
-            box.get().box();
-            return builder.get().toString();
+            Throwable error;
+            try {
+                box.get().box();
+                error = null;
+            } catch (Throwable e) {
+                error = e;
+            }
+            return new Result(builder.get().toString(), error);
         } finally {
             builder.set(original);
+        }
+    }
+
+    public static class Result {
+        public final String output;
+        public final Throwable error;
+
+        public Result(String output, Throwable error) {
+            this.output = output;
+            this.error = error;
         }
     }
 }

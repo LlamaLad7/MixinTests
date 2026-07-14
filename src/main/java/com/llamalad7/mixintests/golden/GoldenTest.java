@@ -27,26 +27,30 @@ public class GoldenTest {
     private static final String TEST_PACKAGE = "com.llamalad7.mixintests.tests.";
     private static final Path OUTPUT_DIR = Paths.get(BuildConstants.TEST_OUTPUT_DIR);
 
+    private final String testName;
     private final TestResult result;
     private final MixinVersions mixinVersions;
     private final Path baseOutputDir;
     private final boolean testBytecode;
+    private final boolean shouldFail;
     private final Path classOutputDir;
-    private final List<Error> errors = new ArrayList<>();
+    private final List<Throwable> errors = new ArrayList<>();
 
-    public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions, boolean testBytecode) {
+    public GoldenTest(String testName, TestResult result, MixinVersions mixinVersions, boolean testBytecode, boolean shouldFail) {
+        this.testName = testName;
         this.result = result;
         this.mixinVersions = mixinVersions;
         this.baseOutputDir = testPath(testName);
         this.testBytecode = testBytecode;
+        this.shouldFail = shouldFail;
         this.classOutputDir = chooseClassOutputDir();
     }
 
     public void test() {
         try {
             doTest();
-            for (Error error : errors) {
-                throw error;
+            for (Throwable error : errors) {
+                throw new AssertionError("Unexpected error", error);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -58,7 +62,17 @@ public class GoldenTest {
     }
 
     private void doTest() throws IOException {
-        checkFile(baseOutputDir.resolve("output.txt"), result.output, false);
+        if (shouldFail) {
+            if (result.error == null) {
+                errors.add(new AssertionError(String.format("Test %s succeeded but should have failed!", testName)));
+            }
+            checkFile(baseOutputDir.resolve(String.format("error-%s.txt", mixinVersions.getSlug())), errorToString(result.error), true);
+        } else {
+            if (result.error != null) {
+                errors.add(result.error);
+            }
+            checkFile(baseOutputDir.resolve("output.txt"), result.output, false);
+        }
         if (testBytecode) {
             for (Map.Entry<String, byte[]> entry : result.transformedClasses.entrySet()) {
                 String fileName = StringUtils.removeStart(entry.getKey(), TEST_PACKAGE).replace('.', '/') + ".asm";
@@ -66,6 +80,15 @@ public class GoldenTest {
                 checkFile(output, disassembleClass(entry.getKey(), entry.getValue()), true);
             }
         }
+    }
+
+    private String errorToString(Throwable error) {
+        StringBuilder result = new StringBuilder();
+        while (error != null) {
+            result.append(error.getClass().getName()).append(": ").append(error.getMessage()).append('\n');
+            error = error.getCause();
+        }
+        return result.toString();
     }
 
     private String disassembleClass(String name, byte[] bytes) {

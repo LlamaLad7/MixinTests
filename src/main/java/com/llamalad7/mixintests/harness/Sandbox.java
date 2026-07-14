@@ -1,5 +1,6 @@
 package com.llamalad7.mixintests.harness;
 
+import com.llamalad7.mixintests.harness.tests.TestBox;
 import com.llamalad7.mixintests.harness.util.MixinVersions;
 
 import java.io.Closeable;
@@ -20,11 +21,16 @@ public class Sandbox implements Closeable {
         return transformingClassLoader.loadClass(className);
     }
 
-    public TestResult doTest(Supplier<String> routine) {
+    public TestResult doTest(Supplier<TestBox.Result> routine) {
         ClassLoader currentThreadPreviousClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(transformingClassLoader);
         try {
-            return new TestResult(routine.get(), ((TransformingClassLoaderBridge) transformingClassLoader).getTransformedClasses());
+            TestBox.Result result = routine.get();
+            return new TestResult(
+                    result.output,
+                    result.error,
+                    ((TransformingClassLoaderBridge) transformingClassLoader).getTransformedClasses()
+            );
         } finally {
             Thread.currentThread().setContextClassLoader(currentThreadPreviousClassLoader);
         }

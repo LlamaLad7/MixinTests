@@ -77,7 +77,7 @@ public class TestBootstrap {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        new GoldenTest(testName, result, mixinVersions, testAnn.testBytecode()).test();
+        new GoldenTest(testName, result, mixinVersions, testAnn.testBytecode(), testAnn.shouldFail()).test();
     }
 
     private static Set<MixinVersions> getMixinVersions() {

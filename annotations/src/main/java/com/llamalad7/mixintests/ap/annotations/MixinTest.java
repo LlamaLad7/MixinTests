@@ -23,4 +23,6 @@ public @interface MixinTest {
     TestOption mixinExtras() default TestOption.OFF;
 
     boolean testBytecode() default false;
+
+    boolean shouldFail() default false;
 }
