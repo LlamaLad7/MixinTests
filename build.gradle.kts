@@ -1,4 +1,6 @@
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     java
@@ -92,5 +94,10 @@ tasks.withType<Test> {
     doFirst {
         val isFiltered = (filter as DefaultTestFilter).commandLineIncludePatterns.isNotEmpty()
         systemProperty(Props.TESTS_FILTERED, isFiltered)
+    }
+
+    testLogging {
+        events(TestLogEvent.FAILED)
+        exceptionFormat = TestExceptionFormat.FULL
     }
 }
