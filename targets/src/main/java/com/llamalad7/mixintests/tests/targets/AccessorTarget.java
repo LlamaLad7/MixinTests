@@ -8,5 +8,6 @@ public class AccessorTarget extends TestBox {
     private final String x = "x";
 
     @Override
-    protected void box() {}
+    protected void box() {
+    }
 }
