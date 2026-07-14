@@ -25,4 +25,6 @@ public @interface MixinTest {
     boolean testBytecode() default false;
 
     boolean shouldFail() default false;
+
+    String[] mixinOptions() default {};
 }

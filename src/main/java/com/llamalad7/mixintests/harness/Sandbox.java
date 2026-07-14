@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 public class Sandbox implements Closeable {
     private final URLClassLoader transformingClassLoader;
 
-    public Sandbox(String testName, List<MixinConfig> configs, MixinVersions mixinVersions) {
-        this.transformingClassLoader = makeTransformingClassLoader(testName, configs, mixinVersions);
+    public Sandbox(String testName, List<MixinConfig> configs, MixinVersions mixinVersions, String[] mixinOptions) {
+        this.transformingClassLoader = makeTransformingClassLoader(testName, configs, mixinVersions, mixinOptions);
     }
 
     public Class<?> loadClass(String className) throws ClassNotFoundException {
@@ -42,12 +42,12 @@ public class Sandbox implements Closeable {
         }
     }
 
-    private static URLClassLoader makeTransformingClassLoader(String testName, List<MixinConfig> configs, MixinVersions mixinVersions) {
+    private static URLClassLoader makeTransformingClassLoader(String testName, List<MixinConfig> configs, MixinVersions mixinVersions, String[] mixinOptions) {
         try {
             URLClassLoader bootstrapCl = new IsolatedClassLoader(ClassLoader.getSystemClassLoader(), mixinVersions);
             Class<?> transformingClClass = bootstrapCl.loadClass("com.llamalad7.mixintests.service.TransformingClassLoader");
             Constructor<?> ctor = transformingClClass.getConstructor(ClassLoader.class, SandboxInfo.class);
-            return (URLClassLoader) ctor.newInstance(bootstrapCl, new SandboxInfo(testName, configs, mixinVersions));
+            return (URLClassLoader) ctor.newInstance(bootstrapCl, new SandboxInfo(testName, configs, mixinVersions, mixinOptions));
         } catch (Exception e) {
             throw new RuntimeException("Failed to make sandbox CL: ", e);
         }

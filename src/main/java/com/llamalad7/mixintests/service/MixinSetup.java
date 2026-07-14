@@ -29,6 +29,7 @@ public class MixinSetup {
             decorateWithFabricCompat(configs);
         }
         finishMixinBootstrapping();
+        setEnvironmentOptions();
     }
 
     private static void addMixinConfig(MixinConfig config) {
@@ -58,6 +59,13 @@ public class MixinSetup {
             m.invoke(null, MixinEnvironment.Phase.DEFAULT);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static void setEnvironmentOptions() {
+        for (String option : TestUtils.getSandboxInfo().mixinOptions) {
+            String[] kv = option.split("=");
+            MixinEnvironment.getCurrentEnvironment().setOption(MixinEnvironment.Option.valueOf(kv[0]), Boolean.parseBoolean(kv[1]));
         }
     }
 }
