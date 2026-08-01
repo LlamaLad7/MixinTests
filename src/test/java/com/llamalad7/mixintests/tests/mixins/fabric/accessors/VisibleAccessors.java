@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Method;
 
-@MixinTest(box = AccessorTarget.class, fabricMixin = TestOption.ON)
+@MixinTest(box = AccessorTarget.class, fabricMixin = TestOption.ON, minFabricMixin = "0.17.4")
 public class VisibleAccessors {
     @Mixin(AccessorTarget.class)
     static abstract class Mixin1 extends TestBox {
