@@ -1,0 +1,2 @@
+java.lang.String com.llamalad7.mixintests.tests.targets.AccessorTarget.getX(): 0000
+public java.lang.String com.llamalad7.mixintests.tests.targets.AccessorTarget.getTest(): 0001
