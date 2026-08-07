@@ -3,6 +3,7 @@ package com.llamalad7.mixintests.tests.mixins.fabric.accessors;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
 import com.llamalad7.mixintests.ap.annotations.TestOption;
 import com.llamalad7.mixintests.harness.tests.TestBox;
+import com.llamalad7.mixintests.tests.AccessorUtil;
 import com.llamalad7.mixintests.tests.targets.InvokerTarget;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
@@ -22,11 +23,21 @@ public class VisibleInvokers {
         @Invoker("test")
         public abstract String callTest();
 
+        @Invoker("y")
+        abstract String callY();
+
+        @Invoker("z")
+        static String callZ() {
+            throw new AssertionError("Implemented via Mixin");
+        }
+
         @Inject(method = "box", at = @At("HEAD"))
-        private void box(CallbackInfo ci) throws NoSuchMethodException {
-            for (Method method : AccessorUtil.getMethods(InvokerMixin.class, "callX", "callTest")) {
+        private void box(CallbackInfo ci) {
+            for (Method method : AccessorUtil.getMethods(InvokerMixin.class, "callX", "callTest", "callY")) {
                 print(AccessorUtil.formatMethod(method));
             }
+
+            print(AccessorUtil.formatMethod(AccessorUtil.findUniqueMethod(InvokerMixin.class, "callZ")));
         }
     }
 }

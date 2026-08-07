@@ -1,8 +1,8 @@
-package com.llamalad7.mixintests.tests.mixins.fabric.accessors;
+package com.llamalad7.mixintests.tests;
 
 import java.lang.reflect.Method;
 
-final class AccessorUtil {
+public final class AccessorUtil {
     public static Method[] getMethods(Class<?> clazz, String ...names) {
         Method[] methods = new Method[names.length];
 
@@ -19,6 +19,13 @@ final class AccessorUtil {
     public static String formatMethod(Method m) {
         return m + ": " + String.format("%04x", m.getModifiers());
     }
-
+    public static Method findUniqueMethod(Class<?> clazz, String name) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            if(method.getName().startsWith(name)) {
+                return method;
+            }
+        }
+        throw new RuntimeException("Unique method: " + name + " was not found");
+    }
     private AccessorUtil() {}
 }

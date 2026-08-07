@@ -18,4 +18,12 @@ public class InvokerTarget extends TestBox {
     public String x() {
         return "x";
     }
+
+    private static String y() {
+        return "y";
+    }
+
+    private static String z() {
+        return "z";
+    }
 }

@@ -1,2 +1,4 @@
 java.lang.String com.llamalad7.mixintests.tests.targets.InvokerTarget.callX(): 0000
 public java.lang.String com.llamalad7.mixintests.tests.targets.InvokerTarget.callTest(): 0001
+java.lang.String com.llamalad7.mixintests.tests.targets.InvokerTarget.callY(): 0000
+static java.lang.String com.llamalad7.mixintests.tests.targets.InvokerTarget.callZ_$md$3970be$0(): 1008
