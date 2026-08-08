@@ -7,7 +7,7 @@ public class AccessorTarget extends TestBox {
     private final String TEST = "TEST";
     private final String x = "x";
     private static final String y = "y";
-    private static final String z = "y";
+    private static final String z = "z";
 
     @Override
     protected void box() {
