@@ -54,12 +54,16 @@ buildConfig {
     useJavaOutput()
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "MixinArtifacts") {
         val fabricMixinVersions = FABRIC_MIXIN_VERSIONS.toMutableList()
+        val mixinExtrasVersions = MIXINEXTRAS_VERSIONS.toMutableList()
         if (hasProperty("fabricMixinDir")) {
             fabricMixinVersions.add(LOCAL_FABRIC_MIXIN_VERSION)
         }
+        if (hasProperty("mixinExtrasDir")) {
+            mixinExtrasVersions.add(LOCAL_MIXINEXTRAS_VERSION)
+        }
         buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
         buildConfigField("FABRIC_MIXIN_JARS", fabricMixinVersions.associateWith(project::fabricMixinJar))
-        buildConfigField("MIXINEXTRAS_JARS", MIXINEXTRAS_VERSIONS.associateWith(project::mixinExtrasJar))
+        buildConfigField("MIXINEXTRAS_JARS", mixinExtrasVersions.associateWith(project::mixinExtrasJar))
     }
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "BuildConstants") {
         systemPropField(Props::TEST_OUTPUT_DIR)
