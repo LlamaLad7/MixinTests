@@ -17,6 +17,10 @@ public class Sandbox implements Closeable {
         this.transformingClassLoader = makeTransformingClassLoader(testName, configs, mixinVersions, mixinOptions);
     }
 
+    public void initMixin() {
+        ((TransformingClassLoaderBridge) transformingClassLoader).initMixin();
+    }
+
     public Class<?> loadClass(String className) throws ClassNotFoundException {
         return transformingClassLoader.loadClass(className);
     }
