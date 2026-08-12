@@ -14,7 +14,10 @@ import org.junit.jupiter.api.DynamicTest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -68,6 +71,7 @@ public class TestBootstrap {
         TestResult result;
         try (Sandbox sandbox = new Sandbox(testName, configs, mixinVersions, testAnn.mixinOptions())) {
             result = sandbox.doTest(() -> TestBox.run(() -> {
+                sandbox.initMixin();
                 try {
                     return (TestBox) sandbox.loadClass(boxClass.getName()).getConstructor().newInstance();
                 } catch (ReflectiveOperationException e) {

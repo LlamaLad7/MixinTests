@@ -33,6 +33,10 @@ public class TransformingClassLoader extends IsolatedClassLoader implements Tran
         }
         INSTANCE = this;
         this.sandboxInfo = sandboxInfo;
+    }
+
+    @Override
+    public void initMixin() {
         MixinSetup.init(sandboxInfo.mixinConfigs);
         loadDummyTarget();
     }
