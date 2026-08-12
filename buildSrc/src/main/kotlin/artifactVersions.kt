@@ -1,4 +1,5 @@
 const val LOCAL_FABRIC_MIXIN_VERSION = "1.0.0+mixin.1.0.0"
+const val LOCAL_MIXINEXTRAS_VERSION = "1.0.0"
 
 val MIXIN_VERSIONS = listOf(
     "0.8.4",

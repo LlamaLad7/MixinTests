@@ -13,3 +13,11 @@ providers.gradleProperty("fabricMixinDir").orNull?.let { dir ->
         }
     }
 }
+
+providers.gradleProperty("mixinExtrasDir").orNull?.let { dir ->
+    includeBuild(dir) {
+        dependencySubstitution {
+            substitute(module("io.github.llamalad7:mixinextras-common:1.0.0")).using(project(":platform:common"))
+        }
+    }
+}
