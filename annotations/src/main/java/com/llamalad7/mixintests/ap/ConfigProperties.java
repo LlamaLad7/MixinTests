@@ -14,16 +14,19 @@ public class ConfigProperties {
     public final String id;
     public final int fabricCompat;
     public final String plugin;
+    public final boolean required;
 
     public ConfigProperties(ProcessingEnvironment processingEnv, Config annotation) {
         if (annotation == null) {
             this.id = "";
             this.fabricCompat = Integer.MAX_VALUE;
             this.plugin = null;
+            this.required = true;
             return;
         }
         this.id = annotation.id();
         this.fabricCompat = annotation.fabricCompat();
+        this.required = annotation.required();
         try {
             annotation.plugin();
             throw new AssertionError("unreachable");
