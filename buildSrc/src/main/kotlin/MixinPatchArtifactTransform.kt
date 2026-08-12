@@ -12,7 +12,7 @@ abstract class MixinPatchArtifactTransform : TransformAction<TransformParameters
     override fun transform(outputs: TransformOutputs) {
         val inputFile = inputArtifact.get().asFile
         val outputFile = outputs.file(inputFile.name.replace(".jar", "-patched.jar"))
-        transformJar(inputFile, outputFile, stubs) { node ->
+        transformJar(inputFile, outputFile, excludedEntries, stubs) { node ->
             for (transformer in transformers) {
                 transformer(node)
             }
@@ -20,8 +20,12 @@ abstract class MixinPatchArtifactTransform : TransformAction<TransformParameters
     }
 
     private companion object {
+        val excludedEntries = sequenceOf(
+            excludedServices,
+        ).reduce { a, b -> a + b }
+
         val stubs = sequenceOf(
-            serviceStubs
+            serviceStubs,
         ).reduce { a, b -> a + b }
 
         val transformers = listOf(
