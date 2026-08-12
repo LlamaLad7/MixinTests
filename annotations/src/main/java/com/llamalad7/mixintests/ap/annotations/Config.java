@@ -13,4 +13,6 @@ public @interface Config {
     int fabricCompat() default Integer.MAX_VALUE;
 
     Class<?> plugin() default void.class;
+    
+    boolean required() default true;
 }

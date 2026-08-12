@@ -12,7 +12,7 @@ public class MixinTestConfig {
     private final String pkg;
     private final String minVersion = "0.8";
     private final String compatibilityLevel = "JAVA_11";
-    private final boolean required = true;
+    private final boolean required;
     private final InjectorOptions injectors = new InjectorOptions(1);
     private final MixinExtrasOptions mixinextras;
     private final List<String> mixins;
@@ -29,6 +29,7 @@ public class MixinTestConfig {
         this.fabricCompat = configProperties.fabricCompat;
         this.plugin = configProperties.plugin;
         this.mixinextras = new MixinExtrasOptions(annotation.minMixinExtras());
+        this.required = configProperties.required;
     }
 
     public String getFileName() {
@@ -37,7 +38,8 @@ public class MixinTestConfig {
                 testClass.getQualifiedName(),
                 id,
                 String.valueOf(fabricCompat),
-                plugin
+                plugin,
+                String.valueOf(required)
         ) + ".mixins.json";
     }
 
