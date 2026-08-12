@@ -7,12 +7,18 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
-fun transformJar(inputJar: File, outputJar: File, stubs: Map<String, () -> ClassNode>, transformer: (ClassNode) -> Unit) {
+fun transformJar(
+    inputJar: File,
+    outputJar: File,
+    excludedEntries: Set<String>,
+    stubs: Map<String, () -> ClassNode>,
+    transformer: (ClassNode) -> Unit,
+) {
     JarFile(inputJar).use { input ->
         JarOutputStream(FileOutputStream(outputJar)).use { output ->
             val remainingStubs = stubs.toMutableMap()
             for (entry in input.entries()) {
-                if (entry.isSignature()) {
+                if (entry.isSignature() || entry.name in excludedEntries) {
                     continue
                 }
                 val entryInputStream = input.getInputStream(entry)

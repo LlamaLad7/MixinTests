@@ -6,6 +6,10 @@ import org.objectweb.asm.tree.MethodInsnNode
 
 private val HOOK_CLASS = Type.getObjectType("com/llamalad7/mixintests/service/MixinHooks")
 
+val excludedServices = setOf(
+    "META-INF/services/org.spongepowered.asm.service.IMixinService",
+)
+
 fun makeUuidsDeterministic(node: ClassNode) {
     for (method in node.methods) {
         for (insn in method.instructions) {
