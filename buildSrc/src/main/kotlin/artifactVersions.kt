@@ -19,3 +19,9 @@ val MIXINEXTRAS_VERSIONS = listOf(
     "0.4.1",
     "0.5.4",
 )
+
+val MIXIN_REQUIRED_MIXINEXTRAS_BUMPS = emptyMap<String, String>()
+
+val FABRIC_MIXIN_REQUIRED_MIXINEXTRAS_BUMPS = mapOf(
+    "0.17.4" to "0.5.5",
+)

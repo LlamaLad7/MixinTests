@@ -64,6 +64,8 @@ buildConfig {
         buildConfigField("MIXIN_JARS", MIXIN_VERSIONS.associateWith(project::mixinJar))
         buildConfigField("FABRIC_MIXIN_JARS", fabricMixinVersions.associateWith(project::fabricMixinJar))
         buildConfigField("MIXINEXTRAS_JARS", mixinExtrasVersions.associateWith(project::mixinExtrasJar))
+        buildConfigField("MIXIN_REQUIRED_MIXINEXTRAS_BUMPS", MIXIN_REQUIRED_MIXINEXTRAS_BUMPS)
+        buildConfigField("FABRIC_MIXIN_REQUIRED_MIXINEXTRAS_BUMPS", FABRIC_MIXIN_REQUIRED_MIXINEXTRAS_BUMPS)
     }
     forClass(packageName = "com.llamalad7.mixintests.harness", className = "BuildConstants") {
         systemPropField(Props::TEST_OUTPUT_DIR)

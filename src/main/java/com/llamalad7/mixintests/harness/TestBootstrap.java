@@ -85,19 +85,31 @@ public class TestBootstrap {
     }
 
     private static Set<MixinVersions> getMixinVersions() {
+        Version latestMixin = MixinVersionInfo.MIXIN_VERSIONS.last();
+        Version latestFabricMixin = MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last();
+        Version latestMixinExtras = MixinVersionInfo.MIXINEXTRAS_VERSIONS.last();
+
         Set<MixinVersions> result = new LinkedHashSet<>();
         for (Version mixinVersion : MixinVersionInfo.MIXIN_VERSIONS) {
-            result.add(new MixinVersions(mixinVersion, MixinVersionInfo.MIXINEXTRAS_VERSIONS.last(), false));
+            result.add(new MixinVersions(mixinVersion, latestMixinExtras, false));
         }
         for (Version mixinVersion : MixinVersionInfo.FABRIC_MIXIN_VERSIONS) {
-            result.add(new MixinVersions(mixinVersion, MixinVersionInfo.MIXINEXTRAS_VERSIONS.last(), true));
+            result.add(new MixinVersions(mixinVersion, latestMixinExtras, true));
         }
+
+        Version minMixinExtrasForMixin = MixinVersionInfo.minMixinExtrasForMixin(latestMixin, false);
+        Version minMixinExtrasForFabricMixin = MixinVersionInfo.minMixinExtrasForMixin(latestFabricMixin, true);
         for (Version mixinExtrasVersion : MixinVersionInfo.MIXINEXTRAS_VERSIONS) {
-            result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), mixinExtrasVersion, false));
-            result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), mixinExtrasVersion, true));
+            if (mixinExtrasVersion.isHigherThanOrEquivalentTo(minMixinExtrasForMixin)) {
+                result.add(new MixinVersions(latestMixin, mixinExtrasVersion, false));
+            }
+            if (mixinExtrasVersion.isHigherThanOrEquivalentTo(minMixinExtrasForFabricMixin)) {
+                result.add(new MixinVersions(latestFabricMixin, mixinExtrasVersion, true));
+            }
         }
-        result.add(new MixinVersions(MixinVersionInfo.MIXIN_VERSIONS.last(), null, false));
-        result.add(new MixinVersions(MixinVersionInfo.FABRIC_MIXIN_VERSIONS.last(), null, true));
+
+        result.add(new MixinVersions(latestMixin, null, false));
+        result.add(new MixinVersions(latestFabricMixin, null, true));
         return result;
     }
 
