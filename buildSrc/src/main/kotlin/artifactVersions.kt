@@ -11,17 +11,13 @@ val FABRIC_MIXIN_VERSIONS = listOf(
     "0.10.7+mixin.0.8.4",
     "0.13.4+mixin.0.8.5",
     "0.15.5+mixin.0.8.7",
-    "0.17.3+mixin.0.8.7",
+    "0.17.4+mixin.0.8.7",
 )
 
 val MIXINEXTRAS_VERSIONS = listOf(
-    "0.3.6",
-    "0.4.1",
-    "0.5.4",
+    "0.5.5",
 )
 
 val MIXIN_REQUIRED_MIXINEXTRAS_BUMPS = emptyMap<String, String>()
 
-val FABRIC_MIXIN_REQUIRED_MIXINEXTRAS_BUMPS = mapOf(
-    "0.17.4" to "0.5.5",
-)
+val FABRIC_MIXIN_REQUIRED_MIXINEXTRAS_BUMPS = emptyMap<String, String>()
