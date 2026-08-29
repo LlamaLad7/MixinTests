@@ -3,9 +3,12 @@ package com.llamalad7.mixintests.ap;
 import com.google.gson.annotations.SerializedName;
 import com.llamalad7.mixintests.MixinTestConstants;
 import com.llamalad7.mixintests.ap.annotations.MixinTest;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.lang.model.element.TypeElement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MixinTestConfig {
     @SerializedName("package")
@@ -33,14 +36,16 @@ public class MixinTestConfig {
     }
 
     public String getFileName() {
-        return String.join(
-                "-",
-                testClass.getQualifiedName(),
-                id,
-                String.valueOf(fabricCompat),
-                plugin,
-                String.valueOf(required)
-        ) + ".mixins.json";
+        List<CharSequence> components = new ArrayList<>();
+
+        components.add(StringUtils.removeStart(testClass.getQualifiedName().toString(), MixinTestConstants.PACKAGE + '.'));
+        if (!id.isEmpty()) {
+            components.add(id);
+        }
+        int hash = Objects.hash(fabricCompat, plugin, required);
+        components.add(Long.toUnsignedString(hash, 36));
+
+        return String.join("-", components.toArray(new CharSequence[0])) + ".mixins.json";
     }
 
     public int getFabricCompat() {
