@@ -1,0 +1,116 @@
+// root method <init> is running
+// root method box is running
+Runnables:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	is the root or one of the first 2 lambdas
+// root method runnables is running
+A:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a top-level lambda
+	is a top-level lambda with desc ()V
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is the root or one of the first 2 lambdas
+	is one of the first 4 lambdas
+	has depth 1-2 and only desc ()V along the way
+A.B:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is the root or one of the first 2 lambdas
+	is one of the first 4 lambdas
+	is one of the first 5 nested lambdas
+	has depth 1-2 and only desc ()V along the way
+A.B.C:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is one of the first 4 lambdas
+	is one of the first 5 nested lambdas
+A.D:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is one of the first 4 lambdas
+	is one of the first 5 nested lambdas
+	has depth 1-2 and only desc ()V along the way
+E:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a top-level lambda
+	is a top-level lambda with desc ()V
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	has depth 1-2 and only desc ()V along the way
+E.F:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is one of the first 5 nested lambdas
+	has depth 1-2 and only desc ()V along the way
+E.G:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+	is one of the first 5 nested lambdas
+	has depth 1-2 and only desc ()V along the way
+E.G.H:
+	is a lambda or the root
+	is a lambda or the root
+	is a lambda
+	is a lambda or the root with desc ()V
+	is a lambda or the root with desc ()V
+	has depth 2-3
+	is a Runnable
+	is named run
+	is called Ljava/lang/Runnable;run()V
+Suppliers:
+// root method suppliers is running
+A:
+	is an Integer supplier
+A.B:
+	is a String supplier
+C:
+	is a String supplier
