@@ -26,7 +26,7 @@ com/llamalad7/mixintests/tests/mixins/fabric/merging/SignaturePreservationTest$T
   // access flags 0x1
   public <init>()V
    L0
-    LINENUMBER 14 L0
+    LINENUMBER 16 L0
     ALOAD 0
     INVOKESPECIAL java/lang/Object.<init> ()V
     RETURN
