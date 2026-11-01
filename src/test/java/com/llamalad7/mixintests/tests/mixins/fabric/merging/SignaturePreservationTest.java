@@ -11,6 +11,8 @@ public class SignaturePreservationTest {
             SignatureTarget.A.class,
             SignatureTarget.B.class,
             SignatureTarget.C.class,
+            SignatureTarget.D.class,
+            SignatureTarget.E.class
     })
     static class TheMixin {
     }
